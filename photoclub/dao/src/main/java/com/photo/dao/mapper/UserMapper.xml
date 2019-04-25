@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.photo.dao.repository.UserMapper">
+  <resultMap id="BaseResultMap" type="com.photo.dao.domain.User">
+    <id column="u_id" jdbcType="VARCHAR" property="u_id" />
+    <result column="u_account" jdbcType="VARCHAR" property="u_account" />
+    <result column="u_password" jdbcType="VARCHAR" property="u_password" />
+    <result column="u_nickName" jdbcType="VARCHAR" property="u_nickName" />
+    <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar" />
+    <result column="u_isfalse" jdbcType="INTEGER" property="u_isfalse" />
+    <result column="u_profession" jdbcType="VARCHAR" property="u_profession" />
+    <result column="u_hobby" jdbcType="VARCHAR" property="u_hobby" />
+    <result column="u_province" jdbcType="VARCHAR" property="u_province" />
+    <result column="u_city" jdbcType="VARCHAR" property="u_city" />
+    <result column="is_Top" jdbcType="INTEGER" property="is_Top" />
+    <result column="top_time" jdbcType="TIMESTAMP" property="top_time" />
+    <result column="is_new" jdbcType="INTEGER" property="is_new" />
+    <result column="u_createTime" jdbcType="TIMESTAMP" property="u_createTime" />
+    <result column="u_type" jdbcType="INTEGER" property="u_type" />
+    <result column="attention_number" jdbcType="INTEGER" property="attention_number" />
+    <result column="fans_number" jdbcType="INTEGER" property="fans_number" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.photo.dao.domain.User">
+    <result column="u_introduce" jdbcType="LONGVARCHAR" property="u_introduce" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    u_id, u_account, u_password, u_nickName, u_avatar, u_isfalse, u_profession, u_hobby, 
+    u_province, u_city, is_Top, top_time, is_new, u_createTime, u_type, attention_number, 
+    fans_number
+  </sql>
+  <sql id="Blob_Column_List">
+    u_introduce
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_user
+    where u_id = #{u_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_user
+    where u_id = #{u_id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.photo.dao.domain.User">
+    insert into t_user (u_id, u_account, u_password, 
+      u_nickName, u_avatar, u_isfalse, 
+      u_profession, u_hobby, u_province, 
+      u_city, is_Top, top_time, 
+      is_new, u_createTime, u_type, 
+      attention_number, fans_number, u_introduce
+      )
+    values (#{u_id,jdbcType=VARCHAR}, #{u_account,jdbcType=VARCHAR}, #{u_password,jdbcType=VARCHAR}, 
+      #{u_nickName,jdbcType=VARCHAR}, #{u_avatar,jdbcType=VARCHAR}, #{u_isfalse,jdbcType=INTEGER}, 
+      #{u_profession,jdbcType=VARCHAR}, #{u_hobby,jdbcType=VARCHAR}, #{u_province,jdbcType=VARCHAR}, 
+      #{u_city,jdbcType=VARCHAR}, #{is_Top,jdbcType=INTEGER}, #{top_time,jdbcType=TIMESTAMP}, 
+      #{is_new,jdbcType=INTEGER}, #{u_createTime,jdbcType=TIMESTAMP}, #{u_type,jdbcType=INTEGER}, 
+      #{attention_number,jdbcType=INTEGER}, #{fans_number,jdbcType=INTEGER}, #{u_introduce,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.photo.dao.domain.User">
+    insert into t_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="u_id != null">
+        u_id,
+      </if>
+      <if test="u_account != null">
+        u_account,
+      </if>
+      <if test="u_password != null">
+        u_password,
+      </if>
+      <if test="u_nickName != null">
+        u_nickName,
+      </if>
+      <if test="u_avatar != null">
+        u_avatar,
+      </if>
+      <if test="u_isfalse != null">
+        u_isfalse,
+      </if>
+      <if test="u_profession != null">
+        u_profession,
+      </if>
+      <if test="u_hobby != null">
+        u_hobby,
+      </if>
+      <if test="u_province != null">
+        u_province,
+      </if>
+      <if test="u_city != null">
+        u_city,
+      </if>
+      <if test="is_Top != null">
+        is_Top,
+      </if>
+      <if test="top_time != null">
+        top_time,
+      </if>
+      <if test="is_new != null">
+        is_new,
+      </if>
+      <if test="u_createTime != null">
+        u_createTime,
+      </if>
+      <if test="u_type != null">
+        u_type,
+      </if>
+      <if test="attention_number != null">
+        attention_number,
+      </if>
+      <if test="fans_number != null">
+        fans_number,
+      </if>
+      <if test="u_introduce != null">
+        u_introduce,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="u_id != null">
+        #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_account != null">
+        #{u_account,jdbcType=VARCHAR},
+      </if>
+      <if test="u_password != null">
+        #{u_password,jdbcType=VARCHAR},
+      </if>
+      <if test="u_nickName != null">
+        #{u_nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="u_avatar != null">
+        #{u_avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="u_isfalse != null">
+        #{u_isfalse,jdbcType=INTEGER},
+      </if>
+      <if test="u_profession != null">
+        #{u_profession,jdbcType=VARCHAR},
+      </if>
+      <if test="u_hobby != null">
+        #{u_hobby,jdbcType=VARCHAR},
+      </if>
+      <if test="u_province != null">
+        #{u_province,jdbcType=VARCHAR},
+      </if>
+      <if test="u_city != null">
+        #{u_city,jdbcType=VARCHAR},
+      </if>
+      <if test="is_Top != null">
+        #{is_Top,jdbcType=INTEGER},
+      </if>
+      <if test="top_time != null">
+        #{top_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="is_new != null">
+        #{is_new,jdbcType=INTEGER},
+      </if>
+      <if test="u_createTime != null">
+        #{u_createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="u_type != null">
+        #{u_type,jdbcType=INTEGER},
+      </if>
+      <if test="attention_number != null">
+        #{attention_number,jdbcType=INTEGER},
+      </if>
+      <if test="fans_number != null">
+        #{fans_number,jdbcType=INTEGER},
+      </if>
+      <if test="u_introduce != null">
+        #{u_introduce,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.photo.dao.domain.User">
+    update t_user
+    <set>
+      <if test="u_account != null">
+        u_account = #{u_account,jdbcType=VARCHAR},
+      </if>
+      <if test="u_password != null">
+        u_password = #{u_password,jdbcType=VARCHAR},
+      </if>
+      <if test="u_nickName != null">
+        u_nickName = #{u_nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="u_avatar != null">
+        u_avatar = #{u_avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="u_isfalse != null">
+        u_isfalse = #{u_isfalse,jdbcType=INTEGER},
+      </if>
+      <if test="u_profession != null">
+        u_profession = #{u_profession,jdbcType=VARCHAR},
+      </if>
+      <if test="u_hobby != null">
+        u_hobby = #{u_hobby,jdbcType=VARCHAR},
+      </if>
+      <if test="u_province != null">
+        u_province = #{u_province,jdbcType=VARCHAR},
+      </if>
+      <if test="u_city != null">
+        u_city = #{u_city,jdbcType=VARCHAR},
+      </if>
+      <if test="is_Top != null">
+        is_Top = #{is_Top,jdbcType=INTEGER},
+      </if>
+      <if test="top_time != null">
+        top_time = #{top_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="is_new != null">
+        is_new = #{is_new,jdbcType=INTEGER},
+      </if>
+      <if test="u_createTime != null">
+        u_createTime = #{u_createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="u_type != null">
+        u_type = #{u_type,jdbcType=INTEGER},
+      </if>
+      <if test="attention_number != null">
+        attention_number = #{attention_number,jdbcType=INTEGER},
+      </if>
+      <if test="fans_number != null">
+        fans_number = #{fans_number,jdbcType=INTEGER},
+      </if>
+      <if test="u_introduce != null">
+        u_introduce = #{u_introduce,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="is_top != null">
+        is_top = #{is_top,jdbcType=INTEGER},
+      </if>
+      <if test="top_time != null">
+        top_time = #{top_time,jdbcType=TIMESTAMP}
+      </if>
+    </set>
+    where u_id = #{u_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.photo.dao.domain.User">
+    update t_user
+    set u_account = #{u_account,jdbcType=VARCHAR},
+      u_password = #{u_password,jdbcType=VARCHAR},
+      u_nickName = #{u_nickName,jdbcType=VARCHAR},
+      u_avatar = #{u_avatar,jdbcType=VARCHAR},
+      u_isfalse = #{u_isfalse,jdbcType=INTEGER},
+      u_profession = #{u_profession,jdbcType=VARCHAR},
+      u_hobby = #{u_hobby,jdbcType=VARCHAR},
+      u_province = #{u_province,jdbcType=VARCHAR},
+      u_city = #{u_city,jdbcType=VARCHAR},
+      is_Top = #{is_Top,jdbcType=INTEGER},
+      top_time = #{top_time,jdbcType=TIMESTAMP},
+      is_new = #{is_new,jdbcType=INTEGER},
+      u_createTime = #{u_createTime,jdbcType=TIMESTAMP},
+      u_type = #{u_type,jdbcType=INTEGER},
+      attention_number = #{attention_number,jdbcType=INTEGER},
+      fans_number = #{fans_number,jdbcType=INTEGER},
+      u_introduce = #{u_introduce,jdbcType=LONGVARCHAR}
+    where u_id = #{u_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.User">
+    update t_user
+    set u_account = #{u_account,jdbcType=VARCHAR},
+      u_password = #{u_password,jdbcType=VARCHAR},
+      u_nickName = #{u_nickName,jdbcType=VARCHAR},
+      u_avatar = #{u_avatar,jdbcType=VARCHAR},
+      u_isfalse = #{u_isfalse,jdbcType=INTEGER},
+      u_profession = #{u_profession,jdbcType=VARCHAR},
+      u_hobby = #{u_hobby,jdbcType=VARCHAR},
+      u_province = #{u_province,jdbcType=VARCHAR},
+      u_city = #{u_city,jdbcType=VARCHAR},
+      is_Top = #{is_Top,jdbcType=INTEGER},
+      top_time = #{top_time,jdbcType=TIMESTAMP},
+      is_new = #{is_new,jdbcType=INTEGER},
+      u_createTime = #{u_createTime,jdbcType=TIMESTAMP},
+      u_type = #{u_type,jdbcType=INTEGER},
+      attention_number = #{attention_number,jdbcType=INTEGER},
+      fans_number = #{fans_number,jdbcType=INTEGER}
+    where u_id = #{u_id,jdbcType=VARCHAR}
+  </update>
+  <!--自定义方法-->
+  <sql id="BaseUserInfo">
+    u_id, u_account, u_nickName, u_avatar,u_isfalse, u_profession, u_hobby,
+    u_province, u_city, attention_number,fans_number
+  </sql>
+
+  <resultMap id="userBaseInfo" type="com.photo.dao.domain.User">
+    <id column="u_id" jdbcType="VARCHAR" property="u_id" />
+    <result column="u_account" jdbcType="VARCHAR" property="u_account" />
+    <result column="u_password" jdbcType="VARCHAR" property="u_password" />
+    <result column="u_nickName" jdbcType="VARCHAR" property="u_nickName" />
+    <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar" />
+    <result column="u_isfalse" jdbcType="INTEGER" property="u_isfalse" />
+    <result column="u_profession" jdbcType="VARCHAR" property="u_profession" />
+    <result column="u_hobby" jdbcType="VARCHAR" property="u_hobby" />
+    <result column="u_province" jdbcType="VARCHAR" property="u_province" />
+    <result column="u_city" jdbcType="VARCHAR" property="u_city" />
+    <result column="attention_number" jdbcType="INTEGER" property="attention_number" />
+    <result column="fans_number" jdbcType="INTEGER" property="fans_number" />
+  </resultMap>
+
+  <select id="selectUserByAccount" parameterType="java.lang.String" resultMap="userBaseInfo">
+    select
+    u_id, u_account, u_nickName, u_avatar,u_isfalse, u_profession, u_hobby,
+    u_province, u_city, attention_number,fans_number,u_password,
+    <include refid="Blob_Column_List"/>
+    from t_user where u_account = #{u_account,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectUserIsRecommend" parameterType="java.lang.Integer" resultMap="userBaseInfo">
+    SELECT
+    <include refid="BaseUserInfo"/>
+     FROM t_user WHERE is_Top = #{is_Top,javaType=INTEGER} ORDER BY top_time DESC
+  </select>
+
+  <select id="selectUserByLikeNickName" resultMap="userBaseInfo">
+    SELECT
+    <include refid="BaseUserInfo"/>
+     FROM t_user WHERE u_nickName LIKE CONCAT(CONCAT('%', #{u_nickName}), '%')
+    <choose>
+      <when test="isDesc != 0">
+        ORDER BY top_time DESC
+      </when>
+    </choose>
+  </select>
+</mapper>

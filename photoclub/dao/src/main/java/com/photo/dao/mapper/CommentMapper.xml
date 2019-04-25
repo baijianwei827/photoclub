@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.photo.dao.repository.CommentMapper">
+  <resultMap id="BaseResultMap" type="com.photo.dao.domain.Comment">
+    <id column="co_id" jdbcType="VARCHAR" property="co_id" />
+    <result column="sp_id" jdbcType="VARCHAR" property="sp_id" />
+    <result column="u_id" jdbcType="VARCHAR" property="u_id" />
+    <result column="u_nickName" jdbcType="VARCHAR" property="u_nickName" />
+    <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="co_type" jdbcType="INTEGER" property="co_type" />
+    <result column="an_id" jdbcType="VARCHAR" property="an_id" />
+    <result column="an_name" jdbcType="VARCHAR" property="an_name" />
+    <result column="co_time" jdbcType="TIMESTAMP" property="co_time" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    co_id, sp_id, u_id, u_nickName, u_avatar, content, co_type, an_id, an_name, co_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_comment
+    where co_id = #{co_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_comment
+    where co_id = #{co_id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.photo.dao.domain.Comment">
+    insert into t_comment (co_id, sp_id, u_id, 
+      u_nickName, u_avatar, content, 
+      co_type, an_id, an_name, 
+      co_time)
+    values (#{co_id,jdbcType=VARCHAR}, #{sp_id,jdbcType=VARCHAR}, #{u_id,jdbcType=VARCHAR}, 
+      #{u_nickName,jdbcType=VARCHAR}, #{u_avatar,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{co_type,jdbcType=INTEGER}, #{an_id,jdbcType=VARCHAR}, #{an_name,jdbcType=VARCHAR}, 
+      #{co_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.photo.dao.domain.Comment">
+    insert into t_comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="co_id != null">
+        co_id,
+      </if>
+      <if test="sp_id != null">
+        sp_id,
+      </if>
+      <if test="u_id != null">
+        u_id,
+      </if>
+      <if test="u_nickName != null">
+        u_nickName,
+      </if>
+      <if test="u_avatar != null">
+        u_avatar,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="co_type != null">
+        co_type,
+      </if>
+      <if test="an_id != null">
+        an_id,
+      </if>
+      <if test="an_name != null">
+        an_name,
+      </if>
+      <if test="co_time != null">
+        co_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="co_id != null">
+        #{co_id,jdbcType=VARCHAR},
+      </if>
+      <if test="sp_id != null">
+        #{sp_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_id != null">
+        #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_nickName != null">
+        #{u_nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="u_avatar != null">
+        #{u_avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="co_type != null">
+        #{co_type,jdbcType=INTEGER},
+      </if>
+      <if test="an_id != null">
+        #{an_id,jdbcType=VARCHAR},
+      </if>
+      <if test="an_name != null">
+        #{an_name,jdbcType=VARCHAR},
+      </if>
+      <if test="co_time != null">
+        #{co_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.photo.dao.domain.Comment">
+    update t_comment
+    <set>
+      <if test="sp_id != null">
+        sp_id = #{sp_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_id != null">
+        u_id = #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_nickName != null">
+        u_nickName = #{u_nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="u_avatar != null">
+        u_avatar = #{u_avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="co_type != null">
+        co_type = #{co_type,jdbcType=INTEGER},
+      </if>
+      <if test="an_id != null">
+        an_id = #{an_id,jdbcType=VARCHAR},
+      </if>
+      <if test="an_name != null">
+        an_name = #{an_name,jdbcType=VARCHAR},
+      </if>
+      <if test="co_time != null">
+        co_time = #{co_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where co_id = #{co_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.Comment">
+    update t_comment
+    set sp_id = #{sp_id,jdbcType=VARCHAR},
+      u_id = #{u_id,jdbcType=VARCHAR},
+      u_nickName = #{u_nickName,jdbcType=VARCHAR},
+      u_avatar = #{u_avatar,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      co_type = #{co_type,jdbcType=INTEGER},
+      an_id = #{an_id,jdbcType=VARCHAR},
+      an_name = #{an_name,jdbcType=VARCHAR},
+      co_time = #{co_time,jdbcType=TIMESTAMP}
+    where co_id = #{co_id,jdbcType=VARCHAR}
+  </update>
+</mapper>

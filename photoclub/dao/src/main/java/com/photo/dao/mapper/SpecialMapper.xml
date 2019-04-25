@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.photo.dao.repository.SpecialMapper">
+  <resultMap id="BaseResultMap" type="com.photo.dao.domain.Special">
+    <id column="sp_id" jdbcType="VARCHAR" property="sp_id" />
+    <result column="u_id" jdbcType="VARCHAR" property="u_id" />
+    <result column="t_id" jdbcType="INTEGER" property="t_id" />
+    <result column="sp_name" jdbcType="VARCHAR" property="sp_name" />
+    <result column="i_number" jdbcType="INTEGER" property="i_number" />
+    <result column="img_cover" jdbcType="VARCHAR" property="img_cover" />
+    <result column="comment_number" jdbcType="INTEGER" property="comment_number" />
+    <result column="attention_number" jdbcType="INTEGER" property="attention_number" />
+    <result column="sp_time" jdbcType="TIMESTAMP" property="sp_time" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.photo.dao.domain.Special">
+    <result column="sp_describe" jdbcType="LONGVARCHAR" property="sp_describe" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    sp_id, u_id, t_id, sp_name, i_number, img_cover, sp_time
+  </sql>
+  <sql id="Blob_Column_List">
+    sp_describe
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_special
+    where sp_id = #{sp_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_special
+    where sp_id = #{sp_id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.photo.dao.domain.Special">
+    insert into t_special (sp_id, u_id, t_id, 
+      sp_name, i_number, img_cover, 
+      sp_time, sp_describe)
+    values (#{sp_id,jdbcType=VARCHAR}, #{u_id,jdbcType=VARCHAR}, #{t_id,jdbcType=INTEGER}, 
+      #{sp_name,jdbcType=VARCHAR}, #{i_number,jdbcType=INTEGER}, #{img_cover,jdbcType=VARCHAR}, 
+      #{sp_time,jdbcType=TIMESTAMP}, #{sp_describe,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.photo.dao.domain.Special">
+    insert into t_special
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sp_id != null">
+        sp_id,
+      </if>
+      <if test="u_id != null">
+        u_id,
+      </if>
+      <if test="t_id != null">
+        t_id,
+      </if>
+      <if test="sp_name != null">
+        sp_name,
+      </if>
+      <if test="i_number != null">
+        i_number,
+      </if>
+      <if test="img_cover != null">
+        img_cover,
+      </if>
+      <if test="sp_time != null">
+        sp_time,
+      </if>
+      <if test="sp_describe != null">
+        sp_describe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sp_id != null">
+        #{sp_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_id != null">
+        #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="t_id != null">
+        #{t_id,jdbcType=INTEGER},
+      </if>
+      <if test="sp_name != null">
+        #{sp_name,jdbcType=VARCHAR},
+      </if>
+      <if test="i_number != null">
+        #{i_number,jdbcType=INTEGER},
+      </if>
+      <if test="img_cover != null">
+        #{img_cover,jdbcType=VARCHAR},
+      </if>
+      <if test="sp_time != null">
+        #{sp_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sp_describe != null">
+        #{sp_describe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.photo.dao.domain.Special">
+    update t_special
+    <set>
+      <if test="u_id != null">
+        u_id = #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="t_id != null">
+        t_id = #{t_id,jdbcType=INTEGER},
+      </if>
+      <if test="sp_name != null">
+        sp_name = #{sp_name,jdbcType=VARCHAR},
+      </if>
+      <if test="i_number != null">
+        i_number = #{i_number,jdbcType=INTEGER},
+      </if>
+      <if test="img_cover != null">
+        img_cover = #{img_cover,jdbcType=VARCHAR},
+      </if>
+      <if test="sp_time != null">
+        sp_time = #{sp_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sp_describe != null">
+        sp_describe = #{sp_describe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where sp_id = #{sp_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.photo.dao.domain.Special">
+    update t_special
+    set u_id = #{u_id,jdbcType=VARCHAR},
+      t_id = #{t_id,jdbcType=INTEGER},
+      sp_name = #{sp_name,jdbcType=VARCHAR},
+      i_number = #{i_number,jdbcType=INTEGER},
+      img_cover = #{img_cover,jdbcType=VARCHAR},
+      sp_time = #{sp_time,jdbcType=TIMESTAMP},
+      sp_describe = #{sp_describe,jdbcType=LONGVARCHAR}
+    where sp_id = #{sp_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.Special">
+    update t_special
+    set u_id = #{u_id,jdbcType=VARCHAR},
+      t_id = #{t_id,jdbcType=INTEGER},
+      sp_name = #{sp_name,jdbcType=VARCHAR},
+      i_number = #{i_number,jdbcType=INTEGER},
+      img_cover = #{img_cover,jdbcType=VARCHAR},
+      sp_time = #{sp_time,jdbcType=TIMESTAMP}
+    where sp_id = #{sp_id,jdbcType=VARCHAR}
+  </update>
+
+  <!--自定义SQL语句-->
+  <resultMap id="specialInfo" type="java.util.HashMap" extends="BaseResultMap">
+    <id column="sp_id" jdbcType="VARCHAR" property="sp_id" />
+    <result column="u_id" jdbcType="VARCHAR" property="u_id" />
+    <result column="t_id" jdbcType="INTEGER" property="t_id" />
+    <result column="sp_name" jdbcType="VARCHAR" property="sp_name" />
+    <result column="i_number" jdbcType="INTEGER" property="i_number" />
+    <result column="img_cover" jdbcType="VARCHAR" property="img_cover" />
+    <result column="comment_number" jdbcType="INTEGER" property="comment_number" />
+    <result column="attention_number" jdbcType="INTEGER" property="attention_number" />
+    <result column="sp_time" jdbcType="TIMESTAMP" property="sp_time" />
+    <association property="user" javaType="com.photo.dao.domain.User">
+      <id column="u_id" jdbcType="VARCHAR" property="u_id" />
+      <result column="u_nickName" jdbcType="VARCHAR" property="u_nickName" />
+      <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar" />
+    </association>
+  </resultMap>
+  <sql id="userInfo">
+    u.u_id,u.u_nickName,u.u_avatar
+  </sql>
+  <sql id="specialInfo">
+    sp.sp_id,sp.u_id,sp.t_id,sp.sp_name,sp.i_number,sp.img_cover,sp.sp_time,sp.attention_number,sp.comment_number
+  </sql>
+  <select id="selectSpecialByU_id" resultMap="specialInfo">
+      SELECT
+       ty.t_id ,ty.t_name ,
+       <include refid="userInfo"/> ,
+       <include refid="specialInfo"/>
+       FROM  t_user u ,t_type ty ,t_special sp
+        WHERE   sp.`u_id` =  u.`u_id` AND  u.`u_id` =#{u_id}  ORDER BY
+        <choose>
+          <when test="sortType == 0">
+            sp.sp_time
+          </when>
+          <otherwise>
+            sp.attention_number
+          </otherwise>
+        </choose>
+        DESC
+  </select>
+  <select id="selectSpecialByT_idAndName" resultMap="specialInfo">
+    SELECT
+    ty.t_id ,ty.t_name ,
+    <include refid="userInfo"/> ,
+    <include refid="specialInfo"/>
+    FROM  t_user u ,t_type ty ,t_special sp
+    WHERE   sp.`u_id` =  u.`u_id`
+    <choose>
+      <when test="name != null">
+        AND sp.sp_name LIKE CONCAT(CONCAT('%', #{name}), '%')
+      </when>
+      <when test="t_id != null">
+        AND ty.t_id =#{t_id}
+      </when>
+    </choose>
+    ORDER BY
+    <choose>
+      <when test="sortType == 0">
+        sp.sp_time
+      </when>
+      <otherwise>
+        sp.attention_number
+      </otherwise>
+    </choose>
+    DESC
+  </select>
+  <select id="selectSpecialByS_id" resultMap="specialInfo">
+    SELECT
+    ty.t_id ,ty.t_name ,
+    <include refid="userInfo"/>,
+    <include refid="specialInfo"/>
+    FROM t_user u,t_type ty,t_special sp
+    WHERE  sp.`u_id` =  u.`u_id` AND ty.t_id = sp.t_id AND sp.sp_id =#{s_id}
+  </select>
+  <select id="selectSpecialRecommend" parameterType="java.lang.Integer" resultMap="specialInfo">
+    SELECT
+    ty.t_id ,ty.t_name ,
+    <include refid="userInfo"/>,
+    <include refid="specialInfo"/>
+    FROM t_user u,t_type ty,t_special sp
+    WHERE  sp.`u_id` =  u.`u_id` AND ty.t_id = sp.t_id AND sp.is_top=#{is_top}
+    ORDER BY sp.top_time DESC
+  </select>
+</mapper>

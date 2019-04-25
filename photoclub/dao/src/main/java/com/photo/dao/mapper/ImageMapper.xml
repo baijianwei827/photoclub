@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.photo.dao.repository.ImageMapper">
+  <resultMap id="BaseResultMap" type="com.photo.dao.domain.Image">
+    <id column="im_id" jdbcType="VARCHAR" property="im_id" />
+    <result column="sp_id" jdbcType="VARCHAR" property="sp_id" />
+    <result column="u_id" jdbcType="VARCHAR" property="u_id" />
+    <result column="is_cottect" jdbcType="INTEGER" property="is_cottect" />
+    <result column="t_id" jdbcType="INTEGER" property="t_id" />
+    <result column="im_url" jdbcType="VARCHAR" property="im_url" />
+    <result column="im_time" jdbcType="TIMESTAMP" property="im_time" />
+    <result column="im_source" jdbcType="VARCHAR" property="im_source" />
+    <result column="im_source_uId" jdbcType="VARCHAR" property="im_source_uId" />
+    <result column="im_source_name" jdbcType="VARCHAR" property="im_source_name" />
+    <result column="love_number" jdbcType="INTEGER" property="love_number" />
+    <result column="comment_nummber" jdbcType="INTEGER" property="comment_nummber" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.photo.dao.domain.Image">
+    <result column="im_troduce" jdbcType="LONGVARCHAR" property="im_troduce" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    im_id, sp_id, u_id, is_cottect, t_id, im_url, im_time, im_source, im_source_uId, 
+    im_source_name, love_number, comment_nummber
+  </sql>
+  <sql id="Blob_Column_List">
+    im_troduce
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_img
+    where im_id = #{im_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_img
+    where im_id = #{im_id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.photo.dao.domain.Image">
+    insert into t_img (im_id, sp_id, u_id, 
+      is_cottect, t_id, im_url, 
+      im_time, im_source, im_source_uId, 
+      im_source_name, love_number, comment_nummber, 
+      im_troduce)
+    values (#{im_id,jdbcType=VARCHAR}, #{sp_id,jdbcType=VARCHAR}, #{u_id,jdbcType=VARCHAR}, 
+      #{is_cottect,jdbcType=INTEGER}, #{t_id,jdbcType=INTEGER}, #{im_url,jdbcType=VARCHAR}, 
+      #{im_time,jdbcType=TIMESTAMP}, #{im_source,jdbcType=VARCHAR}, #{im_source_uId,jdbcType=VARCHAR}, 
+      #{im_source_name,jdbcType=VARCHAR}, #{love_number,jdbcType=INTEGER}, #{comment_nummber,jdbcType=INTEGER}, 
+      #{im_troduce,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.photo.dao.domain.Image">
+    insert into t_img
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="im_id != null">
+        im_id,
+      </if>
+      <if test="sp_id != null">
+        sp_id,
+      </if>
+      <if test="u_id != null">
+        u_id,
+      </if>
+      <if test="is_cottect != null">
+        is_cottect,
+      </if>
+      <if test="t_id != null">
+        t_id,
+      </if>
+      <if test="im_url != null">
+        im_url,
+      </if>
+      <if test="im_time != null">
+        im_time,
+      </if>
+      <if test="im_source != null">
+        im_source,
+      </if>
+      <if test="im_source_uId != null">
+        im_source_uId,
+      </if>
+      <if test="im_source_name != null">
+        im_source_name,
+      </if>
+      <if test="love_number != null">
+        love_number,
+      </if>
+      <if test="comment_nummber != null">
+        comment_nummber,
+      </if>
+      <if test="im_troduce != null">
+        im_troduce,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="im_id != null">
+        #{im_id,jdbcType=VARCHAR},
+      </if>
+      <if test="sp_id != null">
+        #{sp_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_id != null">
+        #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="is_cottect != null">
+        #{is_cottect,jdbcType=INTEGER},
+      </if>
+      <if test="t_id != null">
+        #{t_id,jdbcType=INTEGER},
+      </if>
+      <if test="im_url != null">
+        #{im_url,jdbcType=VARCHAR},
+      </if>
+      <if test="im_time != null">
+        #{im_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="im_source != null">
+        #{im_source,jdbcType=VARCHAR},
+      </if>
+      <if test="im_source_uId != null">
+        #{im_source_uId,jdbcType=VARCHAR},
+      </if>
+      <if test="im_source_name != null">
+        #{im_source_name,jdbcType=VARCHAR},
+      </if>
+      <if test="love_number != null">
+        #{love_number,jdbcType=INTEGER},
+      </if>
+      <if test="comment_nummber != null">
+        #{comment_nummber,jdbcType=INTEGER},
+      </if>
+      <if test="im_troduce != null">
+        #{im_troduce,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.photo.dao.domain.Image">
+    update t_img
+    <set>
+      <if test="sp_id != null">
+        sp_id = #{sp_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_id != null">
+        u_id = #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="is_cottect != null">
+        is_cottect = #{is_cottect,jdbcType=INTEGER},
+      </if>
+      <if test="t_id != null">
+        t_id = #{t_id,jdbcType=INTEGER},
+      </if>
+      <if test="im_url != null">
+        im_url = #{im_url,jdbcType=VARCHAR},
+      </if>
+      <if test="im_time != null">
+        im_time = #{im_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="im_source != null">
+        im_source = #{im_source,jdbcType=VARCHAR},
+      </if>
+      <if test="im_source_uId != null">
+        im_source_uId = #{im_source_uId,jdbcType=VARCHAR},
+      </if>
+      <if test="im_source_name != null">
+        im_source_name = #{im_source_name,jdbcType=VARCHAR},
+      </if>
+      <if test="love_number != null">
+        love_number = #{love_number,jdbcType=INTEGER},
+      </if>
+      <if test="comment_nummber != null">
+        comment_nummber = #{comment_nummber,jdbcType=INTEGER},
+      </if>
+      <if test="im_troduce != null">
+        im_troduce = #{im_troduce,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="is_top != null">
+        is_top = #{is_top,jdbcType=INTEGER},
+      </if>
+      <if test="top_time != null">
+        time_top = #{top_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where im_id = #{im_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.photo.dao.domain.Image">
+    update t_img
+    set sp_id = #{sp_id,jdbcType=VARCHAR},
+      u_id = #{u_id,jdbcType=VARCHAR},
+      is_cottect = #{is_cottect,jdbcType=INTEGER},
+      t_id = #{t_id,jdbcType=INTEGER},
+      im_url = #{im_url,jdbcType=VARCHAR},
+      im_time = #{im_time,jdbcType=TIMESTAMP},
+      im_source = #{im_source,jdbcType=VARCHAR},
+      im_source_uId = #{im_source_uId,jdbcType=VARCHAR},
+      im_source_name = #{im_source_name,jdbcType=VARCHAR},
+      love_number = #{love_number,jdbcType=INTEGER},
+      comment_nummber = #{comment_nummber,jdbcType=INTEGER},
+      im_troduce = #{im_troduce,jdbcType=LONGVARCHAR}
+    where im_id = #{im_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.Image">
+    update t_img
+    set sp_id = #{sp_id,jdbcType=VARCHAR},
+      u_id = #{u_id,jdbcType=VARCHAR},
+      is_cottect = #{is_cottect,jdbcType=INTEGER},
+      t_id = #{t_id,jdbcType=INTEGER},
+      im_url = #{im_url,jdbcType=VARCHAR},
+      im_time = #{im_time,jdbcType=TIMESTAMP},
+      im_source = #{im_source,jdbcType=VARCHAR},
+      im_source_uId = #{im_source_uId,jdbcType=VARCHAR},
+      im_source_name = #{im_source_name,jdbcType=VARCHAR},
+      love_number = #{love_number,jdbcType=INTEGER},
+      comment_nummber = #{comment_nummber,jdbcType=INTEGER}
+    where im_id = #{im_id,jdbcType=VARCHAR}
+  </update>
+
+  <!--自定义-->
+  <sql id="imgInfo">
+    im.im_id, im.sp_id, im.u_id, im.is_cottect, im.t_id, im.im_url, im.im_time, im.im_source, im.im_source_uId,
+    im.im_source_name, im.love_number, im.comment_nummber,im.im_troduce
+  </sql>
+  <sql id="labelInfo">
+    la.t_i_la_id, la.la_id, la.la_name
+  </sql>
+  <resultMap id="image" type="java.util.Map" extends="ResultMapWithBLOBs">
+    <collection property="labelList" javaType="com.photo.dao.domain.ImgLabel">
+      <id column="t_i_la_id" jdbcType="VARCHAR" property="t_i_la_id" />
+      <result column="la_id" jdbcType="VARCHAR" property="la_id" />
+      <result column="la_name" jdbcType="VARCHAR" property="la_name" />
+    </collection>
+  </resultMap>
+  <select id="selectImageByLabel_id" resultMap="image" >
+    SELECT
+    <include refid="imgInfo"/>,
+    <include refid="labelInfo"/>
+     FROM t_img im,t_img_label la WHERE im.im_id = la.i_id AND la.la_id = #{la_id}
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY  im.im_time DESC
+      </when>
+      <when test="sortType == 1">
+        ORDER BY  im.love_number DESC
+      </when>
+    </choose>
+  </select>
+
+  <select id="selectImageByIm_id" resultMap="image" >
+    SELECT
+    <include refid="imgInfo"/>,
+    <include refid="labelInfo"/>
+    FROM t_img im,t_img_label la WHERE im.im_id = la.i_id AND im.im_id = #{im_id}
+  </select>
+  <select id="selectImageByT_id" resultMap="image">
+    SELECT
+    <include refid="imgInfo"/>,
+    <include refid="labelInfo"/>
+    FROM t_img im,t_img_label la WHERE im.im_id = la.i_id AND im.t_id = #{t_id}
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY  im.im_time DESC
+      </when>
+      <when test="sortType == 1">
+        ORDER BY  im.love_number DESC
+      </when>
+    </choose>
+  </select>
+  <select id="selectImageByName" resultMap="image">
+    SELECT
+    <include refid="imgInfo"/>,
+    <include refid="labelInfo"/>
+    FROM t_img im,t_img_label la WHERE im.im_id = la.i_id AND im.im_title LIKE CONCAT(CONCAT('%', #{im_title}), '%')
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY  im.im_time DESC
+      </when>
+      <when test="sortType == 1">
+        ORDER BY  im.love_number DESC
+      </when>
+    </choose>
+  </select>
+</mapper>

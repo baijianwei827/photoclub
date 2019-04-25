@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.photo.dao.repository.AttentionMapper">
+  <resultMap id="BaseResultMap" type="com.photo.dao.domain.Attention">
+    <id column="a_id" jdbcType="VARCHAR" property="a_id" />
+    <result column="u_id" jdbcType="VARCHAR" property="u_id" />
+    <result column="by_u_id" jdbcType="VARCHAR" property="by_u_id" />
+    <result column="a_type" jdbcType="INTEGER" property="a_type" />
+    <result column="a_time" jdbcType="TIMESTAMP" property="a_time" />
+  </resultMap>
+  <resultMap id="AttentionUserInfo" type="java.util.HashMap">
+    <id column="a_id" jdbcType="VARCHAR" property="a_id" />
+    <result column="a_time" jdbcType="TIMESTAMP" property="a_time" />
+    <association property="user" javaType="com.photo.dao.domain.User">
+      <id column="u_id" jdbcType="VARCHAR" property="u_id" />
+      <result column="u_nickName" jdbcType="VARCHAR" property="u_nickName" />
+      <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar" />
+      <result column="attention_number" jdbcType="INTEGER" property="attention_number" />
+      <result column="fans_number" jdbcType="INTEGER" property="fans_number" />
+      <result column="u_introduce" jdbcType="LONGVARCHAR" property="u_introduce" />
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    a_id, by_u_id,a_type, a_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_attention
+    where a_id = #{a_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_attention
+    where a_id = #{a_id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.photo.dao.domain.Attention">
+    insert into t_attention (a_id, u_id, by_u_id, 
+      a_type, a_time)
+    values (#{a_id,jdbcType=VARCHAR}, #{u_id,jdbcType=VARCHAR}, #{by_u_id,jdbcType=VARCHAR}, 
+      #{a_type,jdbcType=INTEGER}, #{a_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.photo.dao.domain.Attention">
+    insert into t_attention
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="a_id != null">
+        a_id,
+      </if>
+      <if test="u_id != null">
+        u_id,
+      </if>
+      <if test="by_u_id != null">
+        by_u_id,
+      </if>
+      <if test="a_type != null">
+        a_type,
+      </if>
+      <if test="a_time != null">
+        a_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="a_id != null">
+        #{a_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_id != null">
+        #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="by_u_id != null">
+        #{by_u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="a_type != null">
+        #{a_type,jdbcType=INTEGER},
+      </if>
+      <if test="a_time != null">
+        #{a_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.photo.dao.domain.Attention">
+    update t_attention
+    <set>
+      <if test="u_id != null">
+        u_id = #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="by_u_id != null">
+        by_u_id = #{by_u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="a_type != null">
+        a_type = #{a_type,jdbcType=INTEGER},
+      </if>
+      <if test="a_time != null">
+        a_time = #{a_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where a_id = #{a_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.Attention">
+    update t_attention
+    set u_id = #{u_id,jdbcType=VARCHAR},
+      by_u_id = #{by_u_id,jdbcType=VARCHAR},
+      a_type = #{a_type,jdbcType=INTEGER},
+      a_time = #{a_time,jdbcType=TIMESTAMP}
+    where a_id = #{a_id,jdbcType=VARCHAR}
+  </update>
+  <!--自定义方法-->
+  <sql id="UserInfo">
+    u.u_id, u.u_nickName, u.u_avatar,u.u_introduce,u.attention_number,u.fans_number
+  </sql>
+  <select id="selectAttentionByU_id"  resultMap="AttentionUserInfo">
+    SELECT
+    a.a_id,a.a_time,
+    <include refid="UserInfo"/>
+    FROM  t_attention as a ,t_user as u WHERE u.u_id = a.by_u_id
+    AND a.u_id = #{u_id} AND a.a_type =#{a_type}  ORDER BY a_time DESC
+  </select>
+  <select id="selectAttentionByU_idBy_id" resultMap="AttentionUserInfo">
+    SELECT
+    a.a_id,a.a_time,
+    <include refid="UserInfo"/>
+    FROM  t_attention as a ,t_user as u WHERE u.u_id = a.by_u_id
+    AND a.u_id = #{u_id} AND a.by_u_id = #{by_u_id} ORDER BY a_time DESC
+  </select>
+  <select id="selectBeanByU_id" resultMap="AttentionUserInfo">
+    SELECT
+    a.a_id,a.a_time,
+    <include refid="UserInfo"/>
+    FROM t_attention as a ,t_user as u WHERE u.u_id = a.by_u_id AND a.a_type = 0
+    AND a.by_u_id = #{u_id} ORDER BY a_time DESC
+  </select>
+</mapper>

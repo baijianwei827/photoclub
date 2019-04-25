@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.photo.dao.repository.LoveMapper">
+  <resultMap id="BaseResultMap" type="com.photo.dao.domain.Love">
+    <id column="lo_id" jdbcType="VARCHAR" property="lo_id" />
+    <result column="u_id" jdbcType="VARCHAR" property="u_id" />
+    <result column="i_id" jdbcType="VARCHAR" property="i_id" />
+    <result column="love_time" jdbcType="TIMESTAMP" property="love_time" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    lo_id, u_id, i_id, love_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_love
+    where lo_id = #{lo_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_love
+    where lo_id = #{lo_id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.photo.dao.domain.Love">
+    insert into t_love (lo_id, u_id, i_id, 
+      love_time)
+    values (#{lo_id,jdbcType=VARCHAR}, #{u_id,jdbcType=VARCHAR}, #{i_id,jdbcType=VARCHAR}, 
+      #{love_time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.photo.dao.domain.Love">
+    insert into t_love
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="lo_id != null">
+        lo_id,
+      </if>
+      <if test="u_id != null">
+        u_id,
+      </if>
+      <if test="i_id != null">
+        i_id,
+      </if>
+      <if test="love_time != null">
+        love_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="lo_id != null">
+        #{lo_id,jdbcType=VARCHAR},
+      </if>
+      <if test="u_id != null">
+        #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="i_id != null">
+        #{i_id,jdbcType=VARCHAR},
+      </if>
+      <if test="love_time != null">
+        #{love_time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.photo.dao.domain.Love">
+    update t_love
+    <set>
+      <if test="u_id != null">
+        u_id = #{u_id,jdbcType=VARCHAR},
+      </if>
+      <if test="i_id != null">
+        i_id = #{i_id,jdbcType=VARCHAR},
+      </if>
+      <if test="love_time != null">
+        love_time = #{love_time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where lo_id = #{lo_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.Love">
+    update t_love
+    set u_id = #{u_id,jdbcType=VARCHAR},
+      i_id = #{i_id,jdbcType=VARCHAR},
+      love_time = #{love_time,jdbcType=TIMESTAMP}
+    where lo_id = #{lo_id,jdbcType=VARCHAR}
+  </update>
+</mapper>

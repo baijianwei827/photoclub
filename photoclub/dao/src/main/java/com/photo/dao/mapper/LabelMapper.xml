@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.photo.dao.repository.LabelMapper">
+  <resultMap id="BaseResultMap" type="com.photo.dao.domain.Label">
+    <id column="la_id" jdbcType="VARCHAR" property="la_id" />
+    <result column="la_name" jdbcType="VARCHAR" property="la_name" />
+    <result column="la_use_number" jdbcType="INTEGER" property="la_use_number" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    la_id, la_name, la_use_number
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_label
+    where la_id = #{la_id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_label
+    where la_id = #{la_id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.photo.dao.domain.Label">
+    insert into t_label (la_id, la_name, la_use_number
+      )
+    values (#{la_id,jdbcType=VARCHAR}, #{la_name,jdbcType=VARCHAR}, #{la_use_number,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.photo.dao.domain.Label">
+    insert into t_label
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="la_id != null">
+        la_id,
+      </if>
+      <if test="la_name != null">
+        la_name,
+      </if>
+      <if test="la_use_number != null">
+        la_use_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="la_id != null">
+        #{la_id,jdbcType=VARCHAR},
+      </if>
+      <if test="la_name != null">
+        #{la_name,jdbcType=VARCHAR},
+      </if>
+      <if test="la_use_number != null">
+        #{la_use_number,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.photo.dao.domain.Label">
+    update t_label
+    <set>
+      <if test="la_name != null">
+        la_name = #{la_name,jdbcType=VARCHAR},
+      </if>
+      <if test="la_use_number != null">
+        la_use_number = #{la_use_number,jdbcType=INTEGER},
+      </if>
+    </set>
+    where la_id = #{la_id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.Label">
+    update t_label
+    set la_name = #{la_name,jdbcType=VARCHAR},
+      la_use_number = #{la_use_number,jdbcType=INTEGER}
+    where la_id = #{la_id,jdbcType=VARCHAR}
+  </update>
+</mapper>
