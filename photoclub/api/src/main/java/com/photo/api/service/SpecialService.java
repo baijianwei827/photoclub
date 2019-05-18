@@ -31,7 +31,7 @@ public interface SpecialService {
      * @param u_id
      * @return
      */
-    Result selectSpecialByU_id(String u_id,Integer sortType,Integer pageNum,Integer pageSize);
+    Result selectSpecialByU_id(String u_id,Integer sortType,String sp_name,Integer pageNum,Integer pageSize);
 
     /**
      * 通过类别、名称查询
@@ -53,4 +53,11 @@ public interface SpecialService {
      * @return
      */
     Result selectSpecialRecommend();
+
+    /**
+     * 获取用户下所有专辑
+     * @param u_id
+     * @return
+     */
+    Result selectAllSpecialByU_id(String u_id);
 }

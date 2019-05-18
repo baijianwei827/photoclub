@@ -25,6 +25,7 @@ public class AliYunOssUtil {
      * 子账号的accessKeyId 和 AK
      */
     private static final String ACCESS_KEY_ID = "LTAIAjrBBmcW5m9L";
+
     private static final String ACCESS_KEY_SECRET = "zWdrSBkLWKgQ1IIwpxfcwXa7hmxkfR";
     /**
      * 角色ID

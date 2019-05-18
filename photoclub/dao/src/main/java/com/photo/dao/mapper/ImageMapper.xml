@@ -8,6 +8,7 @@
     <result column="is_cottect" jdbcType="INTEGER" property="is_cottect" />
     <result column="t_id" jdbcType="INTEGER" property="t_id" />
     <result column="im_url" jdbcType="VARCHAR" property="im_url" />
+    <result column="im_title" jdbcType="VARCHAR" property="im_title" />
     <result column="im_time" jdbcType="TIMESTAMP" property="im_time" />
     <result column="im_source" jdbcType="VARCHAR" property="im_source" />
     <result column="im_source_uId" jdbcType="VARCHAR" property="im_source_uId" />
@@ -19,7 +20,7 @@
     <result column="im_troduce" jdbcType="LONGVARCHAR" property="im_troduce" />
   </resultMap>
   <sql id="Base_Column_List">
-    im_id, sp_id, u_id, is_cottect, t_id, im_url, im_time, im_source, im_source_uId, 
+    im_id, sp_id, u_id, is_cottect, t_id, im_url,im_title, im_time, im_source, im_source_uId,
     im_source_name, love_number, comment_nummber
   </sql>
   <sql id="Blob_Column_List">
@@ -39,14 +40,13 @@
   </delete>
   <insert id="insert" parameterType="com.photo.dao.domain.Image">
     insert into t_img (im_id, sp_id, u_id, 
-      is_cottect, t_id, im_url, 
+      is_cottect, t_id, im_url, im_title,
       im_time, im_source, im_source_uId, 
       im_source_name, love_number, comment_nummber, 
       im_troduce)
     values (#{im_id,jdbcType=VARCHAR}, #{sp_id,jdbcType=VARCHAR}, #{u_id,jdbcType=VARCHAR}, 
       #{is_cottect,jdbcType=INTEGER}, #{t_id,jdbcType=INTEGER}, #{im_url,jdbcType=VARCHAR}, 
-      #{im_time,jdbcType=TIMESTAMP}, #{im_source,jdbcType=VARCHAR}, #{im_source_uId,jdbcType=VARCHAR}, 
-      #{im_source_name,jdbcType=VARCHAR}, #{love_number,jdbcType=INTEGER}, #{comment_nummber,jdbcType=INTEGER}, 
+      #{im_title,jdbcType=VARCHAR},#{im_source_name,jdbcType=VARCHAR}, #{love_number,jdbcType=INTEGER}, #{comment_nummber,jdbcType=INTEGER},
       #{im_troduce,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.photo.dao.domain.Image">
@@ -69,6 +69,9 @@
       </if>
       <if test="im_url != null">
         im_url,
+      </if>
+      <if test="im_title != null">
+        im_title,
       </if>
       <if test="im_time != null">
         im_time,
@@ -110,6 +113,9 @@
       </if>
       <if test="im_url != null">
         #{im_url,jdbcType=VARCHAR},
+      </if>
+      <if test="im_title != null">
+        #{im_title,jdbcType=VARCHAR},
       </if>
       <if test="im_time != null">
         #{im_time,jdbcType=TIMESTAMP},
@@ -179,6 +185,9 @@
       <if test="top_time != null">
         time_top = #{top_time,jdbcType=TIMESTAMP},
       </if>
+      <if test="im_title != null">
+        im_title = #{im_title,jdbcType=VARCHAR},
+      </if>
     </set>
     where im_id = #{im_id,jdbcType=VARCHAR}
   </update>
@@ -189,13 +198,16 @@
       is_cottect = #{is_cottect,jdbcType=INTEGER},
       t_id = #{t_id,jdbcType=INTEGER},
       im_url = #{im_url,jdbcType=VARCHAR},
+      im_title = #{im_title,jdbcType=VARCHAR},
       im_time = #{im_time,jdbcType=TIMESTAMP},
       im_source = #{im_source,jdbcType=VARCHAR},
       im_source_uId = #{im_source_uId,jdbcType=VARCHAR},
       im_source_name = #{im_source_name,jdbcType=VARCHAR},
       love_number = #{love_number,jdbcType=INTEGER},
       comment_nummber = #{comment_nummber,jdbcType=INTEGER},
-      im_troduce = #{im_troduce,jdbcType=LONGVARCHAR}
+      im_troduce = #{im_troduce,jdbcType=LONGVARCHAR},
+      is_top = #{is_top,jdbcType=INTEGER},
+      top_time = #{top_time,jdbcType=TIMESTAMP}
     where im_id = #{im_id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.Image">
@@ -205,35 +217,48 @@
       is_cottect = #{is_cottect,jdbcType=INTEGER},
       t_id = #{t_id,jdbcType=INTEGER},
       im_url = #{im_url,jdbcType=VARCHAR},
+      im_title = #{im_title,jdbcType=VARCHAR},
       im_time = #{im_time,jdbcType=TIMESTAMP},
       im_source = #{im_source,jdbcType=VARCHAR},
       im_source_uId = #{im_source_uId,jdbcType=VARCHAR},
       im_source_name = #{im_source_name,jdbcType=VARCHAR},
       love_number = #{love_number,jdbcType=INTEGER},
-      comment_nummber = #{comment_nummber,jdbcType=INTEGER}
+      comment_nummber = #{comment_nummber,jdbcType=INTEGER},
+      is_top = #{is_top,jdbcType=INTEGER},
+      top_time = #{top_time,jdbcType=TIMESTAMP}
     where im_id = #{im_id,jdbcType=VARCHAR}
   </update>
-
   <!--自定义-->
   <sql id="imgInfo">
-    im.im_id, im.sp_id, im.u_id, im.is_cottect, im.t_id, im.im_url, im.im_time, im.im_source, im.im_source_uId,
+    im.im_id, im.sp_id, im.u_id, im.is_cottect, im.t_id,im.im_title, im.im_url, im.im_time, im.im_source, im.im_source_uId,
     im.im_source_name, im.love_number, im.comment_nummber,im.im_troduce
   </sql>
   <sql id="labelInfo">
     la.t_i_la_id, la.la_id, la.la_name
   </sql>
+  <sql id="userInfo">
+    u.u_id,u.u_nickName,u.u_avatar
+  </sql>
   <resultMap id="image" type="java.util.Map" extends="ResultMapWithBLOBs">
-    <collection property="labelList" javaType="com.photo.dao.domain.ImgLabel">
-      <id column="t_i_la_id" jdbcType="VARCHAR" property="t_i_la_id" />
-      <result column="la_id" jdbcType="VARCHAR" property="la_id" />
-      <result column="la_name" jdbcType="VARCHAR" property="la_name" />
-    </collection>
+    <association property="user" javaType="java.util.Map">
+      <id column="u_id" jdbcType="VARCHAR" property="u_id"/>
+      <result column="u_nickName" jdbcType="VARCHAR" property="u_nickName"/>
+      <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar"/>
+    </association>
+  </resultMap>
+  <resultMap id="imageDeil" type="java.util.Map" extends="ResultMapWithBLOBs">
+    <association property="user" javaType="java.util.Map">
+      <id column="u_id" jdbcType="VARCHAR" property="u_id"/>
+      <result column="u_nickName" jdbcType="VARCHAR" property="u_nickName"/>
+      <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar"/>
+    </association>
   </resultMap>
   <select id="selectImageByLabel_id" resultMap="image" >
     SELECT
+    <include refid="userInfo"/>,
     <include refid="imgInfo"/>,
     <include refid="labelInfo"/>
-     FROM t_img im,t_img_label la WHERE im.im_id = la.i_id AND la.la_id = #{la_id}
+     FROM t_img im,t_img_label la,t_user u WHERE u.u_id = im.u_id AND im.im_id = la.i_id AND la.la_id = #{la_id}
     <choose>
       <when test="sortType == 0">
         ORDER BY  im.im_time DESC
@@ -246,15 +271,16 @@
 
   <select id="selectImageByIm_id" resultMap="image" >
     SELECT
-    <include refid="imgInfo"/>,
-    <include refid="labelInfo"/>
-    FROM t_img im,t_img_label la WHERE im.im_id = la.i_id AND im.im_id = #{im_id}
+    <include refid="userInfo"/>,
+    <include refid="imgInfo"/>
+    FROM t_img im,t_user u WHERE im.u_id = u.u_id AND im.im_id = #{im_id}
   </select>
-  <select id="selectImageByT_id" resultMap="image">
+
+  <select id="selectImageByT_id" resultMap="imageDeil">
     SELECT
     <include refid="imgInfo"/>,
-    <include refid="labelInfo"/>
-    FROM t_img im,t_img_label la WHERE im.im_id = la.i_id AND im.t_id = #{t_id}
+    <include refid="userInfo"/>
+    FROM t_img im,t_user u WHERE u.u_id = im.u_id AND im.t_id = #{t_id}
     <choose>
       <when test="sortType == 0">
         ORDER BY  im.im_time DESC
@@ -264,11 +290,12 @@
       </when>
     </choose>
   </select>
-  <select id="selectImageByName" resultMap="image">
+
+  <select id="selectImageByName" resultMap="imageDeil">
     SELECT
     <include refid="imgInfo"/>,
-    <include refid="labelInfo"/>
-    FROM t_img im,t_img_label la WHERE im.im_id = la.i_id AND im.im_title LIKE CONCAT(CONCAT('%', #{im_title}), '%')
+    <include refid="userInfo"/>
+    FROM t_img im,t_user u WHERE u.u_id = im.u_id AND im.im_title LIKE CONCAT(CONCAT('%', #{im_title}), '%')
     <choose>
       <when test="sortType == 0">
         ORDER BY  im.im_time DESC
@@ -278,4 +305,137 @@
       </when>
     </choose>
   </select>
+
+  <!--通过用户ID的多种查询-->
+  <select id="selectImageByU_id" resultMap="imageDeil">
+    SELECT
+    <include refid="imgInfo"/>,
+    <include refid="userInfo"/>
+    FROM t_img im ,t_user u WHERE u.u_id = im.u_id AND im.u_id =#{u_id}
+    <choose>
+      <when test="is_cottect != null">
+        AND im.is_cottect =#{is_cottect}
+      </when>
+    </choose>
+    <choose>
+      <when test="im_title != null">
+        AND im.im_title LIKE CONCAT(CONCAT('%', #{im_title}), '%')
+      </when>
+    </choose>
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY  im.im_time DESC
+      </when>
+      <when test="sortType == 1">
+        ORDER BY  im.love_number DESC
+      </when>
+    </choose>
+    <choose>
+      <when test="pageNum != null and pageSize != null">
+        LIMIT #{pageNum},#{pageSize}
+      </when>
+    </choose>
+  </select>
+
+  <select id="selectImageByU_idCount" resultType="java.lang.Integer">
+    SELECT
+    COUNT(*)
+    FROM t_img im ,t_user u WHERE u.u_id = im.u_id AND im.u_id =#{u_id}
+    <choose>
+      <when test="is_cottect != null">
+        AND im.is_cottect =#{is_cottect}
+      </when>
+    </choose>
+    <choose>
+      <when test="im_title != null">
+        AND im.im_title LIKE CONCAT(CONCAT('%', #{im_title}), '%')
+      </when>
+    </choose>
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY  im.im_time DESC
+      </when>
+      <when test="sortType == 1">
+        ORDER BY  im.love_number DESC
+      </when>
+    </choose>
+  </select>
+
+  <!--推荐图片-->
+  <select id="recommendImage" resultMap="imageDeil">
+    SELECT
+    <include refid="imgInfo"/>,
+    <include refid="userInfo"/>
+    FROM t_img im ,t_user u WHERE u.u_id = im.u_id
+    <choose>
+      <when test="is_top != null">
+       AND im.is_top = #{is_top}
+      </when>
+    </choose>
+    <choose>
+      <when test="t_id != null">
+        AND im.t_id = #{t_id}
+      </when>
+    </choose>
+    <choose>
+      <when test="im_title != null">
+        AND im.im_title LIKE CONCAT(CONCAT('%', #{im_title}), '%')
+      </when>
+    </choose>
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY  im.im_time DESC
+      </when>
+      <when test="sortType == 1">
+        ORDER BY  im.love_number DESC
+      </when>
+    </choose>
+    <choose>
+      <when test="pageNum != null and pageSize != null">
+        LIMIT #{pageNum},#{pageSize}
+      </when>
+    </choose>
+  </select>
+
+  <select id="recommendImageCount" resultType="java.lang.Integer">
+    SELECT
+    COUNT(*)
+    FROM t_img im ,t_user u WHERE u.u_id = im.u_id
+    <choose>
+      <when test="is_top != null">
+        AND im.is_top = #{is_top}
+      </when>
+    </choose>
+    <choose>
+      <when test="t_id != null">
+        AND im.t_id = #{t_id}
+      </when>
+    </choose>
+    <choose>
+      <when test="im_title != null">
+        AND im.im_title LIKE CONCAT(CONCAT('%', #{im_title}), '%')
+      </when>
+    </choose>
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY  im.im_time DESC
+      </when>
+      <when test="sortType == 1">
+        ORDER BY  im.love_number DESC
+      </when>
+    </choose>
+  </select>
+  <!--获取专辑中的图片-->
+  <select id="selectImageInfoByS_id" resultType="java.util.Map">
+    SELECT
+    <include refid="imgInfo"/>
+    FROM t_img im WHERE im.sp_id = #{sp_id}
+    ORDER BY im.im_time DESC
+    <choose>
+      <when test="pageNum != null and pageSize != null">
+        LIMIT #{pageNum},#{pageSize}
+      </when>
+    </choose>
+  </select>
+
 </mapper>

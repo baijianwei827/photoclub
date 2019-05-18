@@ -1,5 +1,6 @@
 package com.photo.api.service;
 
+import com.photo.api.params.UserParams;
 import com.photo.common.results.Result;
 import com.photo.dao.domain.User;
 
@@ -50,13 +51,6 @@ public interface UserService {
      */
     Result selectUserIsRecommend();
 
-    /**
-     * 模糊查找用户，可以通过时间排序
-     * @param u_nickName
-     * @param isDesc 是否排序0:排序，1：不排
-     * @return
-     */
-    Result selectUserByLike(String u_nickName,Integer isDesc);
 
     /**
      * 忘记密码
@@ -74,4 +68,11 @@ public interface UserService {
      * @return
      */
     Result updateUserPassword(String u_account,String old_password,String new_password);
+
+    /**
+     * 通过用户名称查找并且可以排序
+     * @param userParams
+     * @return
+     */
+    Result selectByNickName(UserParams userParams);
 }

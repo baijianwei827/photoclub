@@ -1,7 +1,9 @@
 package com.photo.dao.repository;
 
 import com.photo.dao.domain.User;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
@@ -46,6 +48,12 @@ public interface UserMapper {
     int updateByPrimaryKeyWithBLOBs(User record);
 
     /**
+     * 用户ID
+     * @param u_id
+     * @return
+     */
+    User selectUserByU_id(@Param("u_id")String u_id);
+    /**
      *
      * @mbg.generated 2019-04-15 11:25:05
      */
@@ -69,7 +77,17 @@ public interface UserMapper {
      * @param u_nickName
      * @return
      */
-    List<User> selectUserByLikeNickName(@Param("u_nickName") String u_nickName,@Param("isDesc") Integer isDesc);
+    List<Map> selectUserByLikeNickName(@Param("u_nickName") String u_nickName,
+                                        @Param("isDesc") Integer isDesc,
+                                        @Param(value = "pageNum") Integer pageNum,
+                                        @Param(value = "pageSize")Integer pageSize);
+    /**
+     * 通过用户昵称查找总个数
+     * @param u_nickName
+     * @return
+     */
+    int selectUserByLikeNickNameCount(@Param("u_nickName") String u_nickName,
+                                      @Param("isDesc") Integer isDesc);
 
     /**
      * 关注个数的加减
@@ -77,7 +95,8 @@ public interface UserMapper {
      * @return
      */
     @Update("UPDATE t_user set attention_number = attention_number + #{number} WHERE u_id = #{u_id}")
-    int UpdateUserAttention(@Param(value = "number") Integer number,@Param(value = "u_id")String u_id);
+    int UpdateUserAttention(@Param(value = "number") Integer number,
+                            @Param(value = "u_id")String u_id);
 
     /**
      * 粉丝个数的加减
@@ -94,4 +113,7 @@ public interface UserMapper {
      */
     @Update("UPDATE t_user SET  u_password  = #{u_password} WHERE u_account = #{u_account}")
     int UpdateUserPassword(@Param(value = "u_password") String u_password ,@Param(value = "u_account") String u_account);
+
+    @Select("SELECT * FROM t_users")
+    Map selelctAllUser();
 }

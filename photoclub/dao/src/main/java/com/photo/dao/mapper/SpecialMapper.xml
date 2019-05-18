@@ -162,6 +162,17 @@
       <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar" />
     </association>
   </resultMap>
+  <resultMap id="specialDeil" type="java.util.HashMap" extends="BaseResultMap">
+    <association property="user" javaType="java.util.Map">
+      <id column="u_id" jdbcType="VARCHAR" property="u_id" />
+      <result column="u_nickName" jdbcType="VARCHAR" property="u_nickName" />
+      <result column="u_avatar" jdbcType="VARCHAR" property="u_avatar" />
+    </association>
+    <association property="type" javaType="java.util.Map">
+      <id column="t_id" jdbcType="INTEGER" property="t_id" />
+      <result column="t_name" jdbcType="VARCHAR" property="t_name" />
+    </association>
+  </resultMap>
   <sql id="userInfo">
     u.u_id,u.u_nickName,u.u_avatar
   </sql>
@@ -174,44 +185,101 @@
        <include refid="userInfo"/> ,
        <include refid="specialInfo"/>
        FROM  t_user u ,t_type ty ,t_special sp
-        WHERE   sp.`u_id` =  u.`u_id` AND  u.`u_id` =#{u_id}  ORDER BY
+        WHERE   sp.`u_id` =  u.`u_id` AND  u.`u_id` =#{u_id}
+         <choose>
+           <when test="sp_name != null ">
+             AND sp.sp_name LIKE CONCAT(CONCAT('%', #{sp_name}), '%')
+           </when>
+         </choose>
         <choose>
           <when test="sortType == 0">
-            sp.sp_time
+            ORDER BY sp.sp_time DESC
           </when>
           <otherwise>
-            sp.attention_number
+            ORDER BY sp.attention_number DESC
           </otherwise>
         </choose>
-        DESC
+        <choose>
+          <when test="pageNum != null and pageSize != null">
+            LIMIT #{pageNum},#{pageSize}
+          </when>
+        </choose>
+
   </select>
+  <select id="selectSpecialByU_idCount" resultType="java.lang.Integer">
+    SELECT
+    COUNT(*)
+    FROM  t_user u ,t_type ty ,t_special sp
+    WHERE   sp.`u_id` =  u.`u_id` AND  u.`u_id` =#{u_id}
+    <choose>
+      <when test="sp_name != null ">
+        AND sp.sp_name LIKE CONCAT(CONCAT('%', #{sp_name}), '%')
+      </when>
+    </choose>
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY sp.sp_time DESC
+      </when>
+      <otherwise>
+        ORDER BY sp.attention_number DESC
+      </otherwise>
+    </choose>
+  </select>
+
   <select id="selectSpecialByT_idAndName" resultMap="specialInfo">
     SELECT
     ty.t_id ,ty.t_name ,
     <include refid="userInfo"/> ,
     <include refid="specialInfo"/>
     FROM  t_user u ,t_type ty ,t_special sp
-    WHERE   sp.`u_id` =  u.`u_id`
+    WHERE   sp.`u_id` =  u.`u_id` AND sp.t_id = ty.t_id
     <choose>
-      <when test="name != null">
-        AND sp.sp_name LIKE CONCAT(CONCAT('%', #{name}), '%')
+      <when test="sp_name != null">
+        AND sp.sp_name LIKE CONCAT(CONCAT('%', #{sp_name}), '%')
       </when>
       <when test="t_id != null">
-        AND ty.t_id =#{t_id}
+        AND sp.t_id =#{t_id}
       </when>
     </choose>
-    ORDER BY
     <choose>
       <when test="sortType == 0">
-        sp.sp_time
+        ORDER BY sp.sp_time DESC
       </when>
       <otherwise>
-        sp.attention_number
+        ORDER BY sp.attention_number DESC
       </otherwise>
     </choose>
-    DESC
+    <choose>
+      <when test="pageNum != null and pageSize != null">
+        LIMIT #{pageNum},#{pageSize}
+      </when>
+    </choose>
   </select>
-  <select id="selectSpecialByS_id" resultMap="specialInfo">
+
+  <select id="selectSpecialByT_idAndNameCount" resultType="java.lang.Integer">
+    SELECT
+    COUNT(*)
+    FROM  t_user u ,t_type ty ,t_special sp
+    WHERE   sp.`u_id` =  u.`u_id` AND  ty.t_id = sp.t_id
+    <choose>
+      <when test="sp_name != null">
+        AND sp.sp_name LIKE CONCAT(CONCAT('%', #{sp_name}), '%')
+      </when>
+      <when test="t_id != null">
+        AND sp.t_id =#{t_id}
+      </when>
+    </choose>
+    <choose>
+      <when test="sortType == 0">
+        ORDER BY sp.sp_time DESC
+      </when>
+      <otherwise>
+        ORDER BY sp.attention_number DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectSpecialByS_id" resultMap="specialDeil">
     SELECT
     ty.t_id ,ty.t_name ,
     <include refid="userInfo"/>,
@@ -219,6 +287,7 @@
     FROM t_user u,t_type ty,t_special sp
     WHERE  sp.`u_id` =  u.`u_id` AND ty.t_id = sp.t_id AND sp.sp_id =#{s_id}
   </select>
+
   <select id="selectSpecialRecommend" parameterType="java.lang.Integer" resultMap="specialInfo">
     SELECT
     ty.t_id ,ty.t_name ,

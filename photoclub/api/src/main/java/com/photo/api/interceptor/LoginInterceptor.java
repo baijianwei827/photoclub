@@ -18,9 +18,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     private static final Gson gson = new Gson();
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-       String token =  request.getHeader("token");
+       String token =  request.getHeader("Authorization");
        if(token == null) {
-           token = request.getParameter("token");
+           token = request.getParameter("Authorization");
        }
        if(token!=null){
            Map map = JwtUtils.checkToken(token);

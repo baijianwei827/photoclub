@@ -6,9 +6,10 @@
     <result column="i_id" jdbcType="VARCHAR" property="i_id" />
     <result column="la_id" jdbcType="VARCHAR" property="la_id" />
     <result column="la_name" jdbcType="VARCHAR" property="la_name" />
+    <result column="u_id" jdbcType="VARCHAR" property="u_id" />
   </resultMap>
   <sql id="Base_Column_List">
-    t_i_la_id, i_id, la_id, la_name
+    t_i_la_id, i_id, la_id, la_name,u_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -22,9 +23,9 @@
   </delete>
   <insert id="insert" parameterType="com.photo.dao.domain.ImgLabel">
     insert into t_img_label (t_i_la_id, i_id, la_id, 
-      la_name)
+      la_name,u_id)
     values (#{t_i_la_id,jdbcType=VARCHAR}, #{i_id,jdbcType=VARCHAR}, #{la_id,jdbcType=VARCHAR}, 
-      #{la_name,jdbcType=VARCHAR})
+      #{la_name,jdbcType=VARCHAR},#{u_id,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.photo.dao.domain.ImgLabel">
     insert into t_img_label
@@ -41,6 +42,9 @@
       <if test="la_name != null">
         la_name,
       </if>
+      <if test="u_id != null">
+      u_id,
+    </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="t_i_la_id != null">
@@ -54,6 +58,9 @@
       </if>
       <if test="la_name != null">
         #{la_name,jdbcType=VARCHAR},
+      </if>
+      <if test="u_id != null">
+        #{u_id,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -69,6 +76,9 @@
       <if test="la_name != null">
         la_name = #{la_name,jdbcType=VARCHAR},
       </if>
+      <if test="u_id != null">
+        u_id = #{u_id,jdbcType=VARCHAR},
+      </if>
     </set>
     where t_i_la_id = #{t_i_la_id,jdbcType=VARCHAR}
   </update>
@@ -76,7 +86,8 @@
     update t_img_label
     set i_id = #{i_id,jdbcType=VARCHAR},
       la_id = #{la_id,jdbcType=VARCHAR},
-      la_name = #{la_name,jdbcType=VARCHAR}
+      la_name = #{la_name,jdbcType=VARCHAR},
+      u_id = #{u_id,jdbcType=VARCHAR}
     where t_i_la_id = #{t_i_la_id,jdbcType=VARCHAR}
   </update>
 </mapper>

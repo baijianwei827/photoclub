@@ -1,11 +1,12 @@
 package com.photo.api.service.Impl;
 
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.photo.api.service.SpecialService;
 import com.photo.common.enmus.ResultEnum;
 import com.photo.common.results.Result;
 import com.photo.common.results.ResultUtil;
+import com.photo.common.tools.PageInfo;
+import com.photo.common.tools.PageUtil;
 import com.photo.dao.domain.Special;
 import com.photo.dao.repository.ImageMapper;
 import com.photo.dao.repository.ImgLabelMapper;
@@ -27,11 +28,12 @@ public class SpecialServiceImpl implements SpecialService {
     private ImageMapper imageMapper;
     @Autowired
     private ImgLabelMapper imgLabelMapper;
+
     @Override
     @Transactional
     public Result insertSpecial(Special special) {
         if(special == null || special.getU_id() == null||
-                special.getU_id()==null || special.getT_id()==null
+                special.getImg_cover()==null || special.getT_id()==null
                 ||special.getSp_name()==null)
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
         special.setSp_id(UUID.randomUUID().toString());
@@ -64,29 +66,34 @@ public class SpecialServiceImpl implements SpecialService {
     }
 
     @Override
-    public Result selectSpecialByU_id(String u_id, Integer sortType,Integer pageNum,Integer pageSize){
+    public Result selectSpecialByU_id(String u_id, Integer sortType,String sp_name,Integer pageNum,Integer pageSize){
         if(u_id == null || sortType == null|| pageNum == null ||
-                pageSize == null || pageNum < 0 || pageSize <=0 )
+                pageSize == null  )
             return ResultUtil.error(ResultEnum.ILLEGAL_ARGUMENT.getMsg());
-        PageHelper.startPage(pageNum,pageSize);
-        List<Map> mapList = specialMapper.selectSpecialByU_id(u_id,sortType);
+        PageUtil pageUtil = new PageUtil(pageNum,pageSize);
+        int total = specialMapper.selectSpecialByU_idCount( u_id, sp_name, sortType);
+        List<Map> mapList = specialMapper.selectSpecialByU_id(
+                u_id,
+                sp_name,
+                sortType,
+                pageUtil.getStartIndex(),
+                pageUtil.getEndIndex());
         mapList = getImgMap(mapList);
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setList(mapList);
-        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageInfo.getList());
+        pageUtil.setList(mapList,total);
+        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageUtil.getList());
     }
 
     @Override
     public Result selectSpecialByT_idAndName(Integer t_id, String name, Integer sortType,Integer pageNum,Integer pageSize) {
         if( sortType == null|| pageNum == null ||
-                pageSize == null || pageNum < 0 || pageSize <=0 )
+                pageSize == null  )
             return ResultUtil.error(ResultEnum.ILLEGAL_ARGUMENT.getMsg());
-        PageHelper.startPage(pageNum,pageSize);
-        List<Map> mapList = specialMapper.selectSpecialByT_idAndName(t_id,name,sortType);
+        PageUtil pageUtil = new PageUtil(pageNum,pageSize);
+        int total = specialMapper.selectSpecialByT_idAndNameCount(t_id,name,sortType);
+        List<Map> mapList = specialMapper.selectSpecialByT_idAndName(t_id,name,sortType,pageUtil.getStartIndex(),pageUtil.getEndIndex());
         mapList = getImgMap(mapList);
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setList(mapList);
-        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageInfo.getList());
+        pageUtil.setList(mapList,total);
+        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageUtil.getList());
     }
     @Override
     public Result selectSpecialByS_id(String s_id,Integer pageNum,Integer pageSize) {
@@ -96,22 +103,34 @@ public class SpecialServiceImpl implements SpecialService {
         Map map = specialMapper.selectSpecialByS_id(s_id);
         if(map == null)
             return ResultUtil.error(ResultEnum.SELECT_ERROR.getMsg());
-         PageHelper.startPage(pageNum,pageSize);
-         List<Map> images = imageMapper.selectImgByS_id(s_id);
+         PageUtil pageUtil = new PageUtil(pageNum,pageSize);
+         int total = imageMapper.selectImageInfoByS_idCount(s_id);
+         List<Map> images = imageMapper.selectImageInfoByS_id(s_id,pageUtil.getStartIndex(),pageUtil.getEndIndex());
          for (Map map1:images){
              String im_id = (String) map1.get("im_id");
              List<Map> labels =  getLabelMap(im_id);
              map1.put("labels",labels);
          }
-         PageInfo pageInfo = new PageInfo();
-         pageInfo.setList(images);
-         map.put("images",pageInfo.getList());
+         pageUtil.setList(images,total);
+         map.put("images",images);
+         map.put("pageNum", pageNum);
+         map.put("pageSize", pageSize);
+         map.put("pages",pageUtil.getTotalPage());
+         map.put("total",total);
         return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),map);
     }
 
     @Override
     public Result selectSpecialRecommend() {
         List<Map> maps = specialMapper.selectSpecialRecommend(1);
+        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),maps);
+    }
+
+    @Override
+    public Result selectAllSpecialByU_id(String u_id) {
+        if(u_id == null)
+            return ResultUtil.error(ResultEnum.SELECT_ERROR.getMsg());
+        List<Map> maps = specialMapper.selectAllSpecialByU_id(u_id);
         return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),maps);
     }
 
@@ -127,6 +146,7 @@ public class SpecialServiceImpl implements SpecialService {
             images =  imageMapper.selectImgByS_id(sp_id);
             map.put("images",images);
         }
+        System.out.println(mapList);
         return mapList;
     }
 

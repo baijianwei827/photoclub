@@ -5,6 +5,7 @@ import com.photo.common.results.Result;
 import com.photo.dao.domain.Image;
 import com.photo.dao.domain.Special;
 import com.photo.dao.repository.ImageMapper;
+import com.photo.dao.repository.UserMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @SpringBootTest
 public class UserServiceTest {
     @Autowired
-    private UserService userService;
+    private UserMapper userMapper;
     @Autowired
     private SpecialService specialService;
     @Autowired
@@ -44,6 +45,7 @@ public class UserServiceTest {
 //        System.out.println(imageMapper.insertSelective(image));
 //          Result result = specialService.selectSpecialByU_id("898bde15-a696-42ae-b167-69ac302bdab6",0,0,3);
 //          System.out.println(result.getData());
+//        System.out.println(userMapper.selelctAllUser());
     }
 
 }

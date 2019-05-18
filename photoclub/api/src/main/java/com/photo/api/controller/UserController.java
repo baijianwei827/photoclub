@@ -1,5 +1,6 @@
 package com.photo.api.controller;
 
+import com.photo.api.params.UserParams;
 import com.photo.api.service.UserService;
 import com.photo.common.results.Result;
 import com.photo.dao.domain.User;
@@ -83,15 +84,13 @@ public class UserController {
 
     /**
      * 通过用户名称查找用户
-     * @param name
-     * @param sortType
      * @return
      */
-    @PostMapping("nickName")
+    @PostMapping("list")
     @ApiOperation(value = "通过用户名称查找用户接口",httpMethod = "POST")
-    @ApiImplicitParam(name="name",value = "用户名称",dataType = "String",required = true)
-    public Result selectByUserName(@RequestParam(name="name")String name,@RequestParam("sortType")Integer sortType){
-       return userService.selectUserByLike(name,sortType);
+    public Result selectByUserName(@RequestBody UserParams userParams){
+        System.out.println(userParams);
+       return userService.selectByNickName(userParams);
     }
 
     /**
@@ -122,12 +121,12 @@ public class UserController {
      * @param map
      * @return
      */
-    @PostMapping("update/pwd")
+    @PostMapping("token/update/pwd")
     @ApiOperation(value = "忘记密码接口",httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "Map",value = "{phone:手机号码,old_password:老密码,new_password:新密码}",dataType = "Map",required = true),
+            @ApiImplicitParam(name = "Map",value = "{u_account:手机号码,old_password:老密码,new_password:新密码}",dataType = "Map",required = true),
     })
     public Result UpdateUserPassword(@RequestBody Map map){
-        return userService.updateUserPassword((String)map.get("phone"),(String)map.get("old_password"),(String)map.get("new_password"));
+        return userService.updateUserPassword((String)map.get("u_account"),(String)map.get("old_password"),(String)map.get("new_password"));
     }
 }

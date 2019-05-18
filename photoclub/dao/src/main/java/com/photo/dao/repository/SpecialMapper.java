@@ -1,7 +1,9 @@
 package com.photo.dao.repository;
 
 import com.photo.dao.domain.Special;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
@@ -55,15 +57,38 @@ public interface SpecialMapper {
      * @param u_id
      * @return
      */
-    List<Map> selectSpecialByU_id(@Param(value = "u_id") String u_id,@Param(value = "sortType") Integer sortType);
+    List<Map> selectSpecialByU_id(@Param(value = "u_id") String u_id,
+                                  @Param("sp_name")String sp_name,
+                                  @Param(value = "sortType") Integer sortType,
+                                  @Param(value = "pageNum") Integer pageNum,
+                                  @Param(value = "pageSize") Integer pageSize);
+
+    int selectSpecialByU_idCount(@Param(value = "u_id") String u_id,
+                                 @Param("sp_name")String sp_name,
+                                 @Param(value = "sortType") Integer sortType);
 
     /**
      * 通过类别、名称查询
      * @param t_id
-     * @param name
+     * @param sp_name
      * @return
      */
-    List<Map> selectSpecialByT_idAndName(@Param(value = "t_id") Integer t_id,@Param(value = "name")String name,@Param(value = "sortType")Integer sortType);
+    List<Map> selectSpecialByT_idAndName(@Param(value = "t_id") Integer t_id,
+                                         @Param(value = "sp_name")String sp_name,
+                                         @Param(value = "sortType")Integer sortType,
+                                         @Param(value = "pageNum")Integer pageNum,
+                                         @Param(value = "pageSize")Integer pageSize);
+
+    /***
+     *
+     * @param t_id
+     * @param sp_name
+     * @param sortType
+     * @return
+     */
+    int selectSpecialByT_idAndNameCount(@Param(value = "t_id") Integer t_id,
+                                        @Param(value = "sp_name")String sp_name,
+                                        @Param(value = "sortType")Integer sortType);
 
     /**
      * 通过专辑ID查找专辑
@@ -98,6 +123,14 @@ public interface SpecialMapper {
      * @return
      */
     List<Map> selectSpecialRecommend(@Param("is_top")Integer is_top);
+
+    /**
+     * 获取用户所有专辑
+     * @param u_id
+     * @return
+     */
+    @Select("SELECT sp_id,sp_name,t_id FROM t_special WHERE u_id=#{u_id}")
+    List<Map> selectAllSpecialByU_id(@Param("u_id") String u_id);
 
 
 

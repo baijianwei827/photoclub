@@ -1,20 +1,17 @@
 package com.photo.api.service.Impl;
 
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.photo.api.params.ImageParams;
 import com.photo.api.service.ImageService;
 import com.photo.api.service.LabelService;
 import com.photo.common.enmus.ResultEnum;
 import com.photo.common.results.Result;
 import com.photo.common.results.ResultUtil;
 import com.photo.common.tools.AliYunOssUtil;
-import com.photo.dao.domain.Image;
-import com.photo.dao.domain.ImgLabel;
-import com.photo.dao.domain.TypeName;
-import com.photo.dao.domain.User;
-import com.photo.dao.repository.ImageMapper;
-import com.photo.dao.repository.SpecialMapper;
-import com.photo.dao.repository.UserMapper;
+import com.photo.common.tools.PageInfo;
+import com.photo.common.tools.PageUtil;
+import com.photo.dao.domain.*;
+import com.photo.dao.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,53 +29,66 @@ public class ImageServiceImpl implements ImageService{
     private SpecialMapper specialMapper;
     @Autowired
     private LabelService labelService;
+    @Autowired
+    private ImgLabelMapper imgLabelMapper;
+
 
     @Override
     @Transactional
-    public Result insertImage(List<Image> images) {
-        if(images.size() == 0){
+    public Result insertImage(Image image) {
+        if(image == null ){
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
         }
-        for(Image image:images){
-            image.setIm_id(UUID.randomUUID().toString());
-            int n = imageMapper.insertSelective(image);
-            if(n != 1)
-                return ResultUtil.error(ResultEnum.ADD_ERROR.getMsg());
-            if(image.getImgLabels().size()!=0)
-                for(ImgLabel imgLabel:image.getImgLabels()){
-                    imgLabel.setI_id(image.getIm_id());
-                    labelService.insertLabel(imgLabel);
-                }
+        image.setIm_id(UUID.randomUUID().toString());
+        image.setIs_top(0);
+        image.setComment_nummber(0);
+        image.setIm_time(new Date());
+        image.setLove_number(0);
+        Special special = specialMapper.selectByPrimaryKey(image.getSp_id());
+        image.setT_id(special.getT_id());
+        int n = imageMapper.insertSelective(image);
+        if(n != 1)
+            return ResultUtil.error(ResultEnum.ADD_ERROR.getMsg());
+        if(image.getImgLabels().size()!=0)
+            for(ImgLabel imgLabel:image.getImgLabels()){
+                imgLabel.setI_id(image.getIm_id());
+                labelService.insertLabel(imgLabel);
+            }
             int m = specialMapper.UpdateSpecialImgNumber(1,image.getSp_id());
             if(m != 1)
                 return ResultUtil.error(ResultEnum.ADD_ERROR.getMsg());
-        }
         return ResultUtil.success(ResultEnum.ADD_SUCCESS.getMsg());
     }
 
     @Override
     @Transactional
-    public Result deleteImage(List<Image> images) {
-        if(images.size() == 0){
+    public Result deleteImage(Image image) {
+        if(image.getIm_id() == null){
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
         }
-        for(Image image:images){
-            int n =imageMapper.deleteByPrimaryKey(image.getIm_id());
-            if(n != 1)
-                return ResultUtil.error(ResultEnum.DELETE_ERROR.getMsg());
-            int m = specialMapper.UpdateSpecialImgNumber(-1,image.getSp_id());
-            if(m != 1)
-                return ResultUtil.error(ResultEnum.DELETE_ERROR.getMsg());
-        }
+        int n =imageMapper.deleteByPrimaryKey(image.getIm_id());
+        if(n != 1)
+            return ResultUtil.error(ResultEnum.DELETE_ERROR.getMsg());
+        int m = specialMapper.UpdateSpecialImgNumber(-1,image.getSp_id());
         return ResultUtil.success(ResultEnum.DELETE_SUCCESS.getMsg());
     }
 
     @Override
     @Transactional
     public Result updateImage(Image image){
+        System.out.println(image);
         if(image.getIm_id() == null || image.getU_id() == null)
             return ResultUtil.error(ResultEnum.UPDATE_ERROR.getMsg());
         int n = imageMapper.updateByPrimaryKeySelective(image);
+        imgLabelMapper.deleteLabelByIm_id(image.getIm_id());
+        Special special = specialMapper.selectByPrimaryKey(image.getSp_id());
+        image.setT_id(special.getT_id());
+        if(image.getImgLabels() != null){
+            for(ImgLabel imgLabel:image.getImgLabels()){
+                imgLabel.setI_id(image.getIm_id());
+                labelService.insertLabel(imgLabel);
+            }
+        }
         if(n != 1)
             return ResultUtil.error(ResultEnum.UPDATE_ERROR.getMsg());
         return ResultUtil.success(ResultEnum.UPDATE_SUCCESS.getMsg());
@@ -88,11 +98,8 @@ public class ImageServiceImpl implements ImageService{
     public Result selectImageByName(String name, Integer pageNum, Integer pageSize, Integer sortType) {
         if(name == null || pageNum == null || pageSize == null || sortType == null)
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
-        PageHelper.startPage(pageNum,pageSize);
         List<Map> maps = imageMapper.selectImageByName(name,sortType);
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setList(maps);
-        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageInfo.getList());
+        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),maps);
     }
 
     @Override
@@ -100,8 +107,10 @@ public class ImageServiceImpl implements ImageService{
         if(im_id == null)
             return ResultUtil.error(ResultEnum.SELECT_ERROR.getMsg());
         Map map = imageMapper.selectImageByIm_id(im_id);
+        List<Map> maps = imgLabelMapper.selectImgLabel(im_id);
         if(map == null)
             return ResultUtil.error(ResultEnum.SELECT_ERROR.getMsg());
+        map.put("labelList",maps);
         return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),map);
     }
 
@@ -109,28 +118,40 @@ public class ImageServiceImpl implements ImageService{
     public Result selectImageByLabel(ImgLabel imgLabel, Integer pageNum, Integer pageSize, Integer sortType) {
         if(imgLabel.getI_id() != null || pageNum == null || pageSize == null ||sortType == null)
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
-        PageHelper.startPage(pageNum,pageSize);
         List<Map> maps= imageMapper.selectImageByLabel_id(imgLabel.getLa_id(),sortType);
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setList(maps);
-        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageInfo.getList());
+        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),maps);
     }
 
     @Override
     public Result selectImageByType_id(Integer t_id, Integer pageNum, Integer pageSize, Integer sortType) {
         if( pageNum == null || t_id == null|| pageSize == null ||sortType == null)
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
-        PageHelper.startPage(pageNum,pageSize);
         List<Map> list = imageMapper.selectImageByT_id(t_id,sortType);
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setList(list);
-        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageInfo.getList());
-    }
-
-    @Override
-    public Result recommendImage() {
-        List<Map> list = imageMapper.recommendImage(1);
         return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),list);
+    }
+    @Override
+    public Result recommendImage(ImageParams imageParams) {
+        if(imageParams.getPageNum() == null
+                || imageParams.getPageSize() == null
+                || imageParams.getSortType() == null)
+            return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
+        PageUtil pageUtil = new PageUtil(
+                imageParams.getPageNum(),
+                imageParams.getPageSize());
+        int total = imageMapper.recommendImageCount(
+                imageParams.getIm_title(),
+                imageParams.getIs_top(),
+                imageParams.getT_id(),
+                imageParams.getSortType());
+        List<Map> list = imageMapper.recommendImage(
+                imageParams.getIm_title(),
+                imageParams.getIs_top(),
+                imageParams.getT_id(),
+                imageParams.getSortType(),
+                pageUtil.getStartIndex(),
+                pageUtil.getEndIndex());
+        pageUtil.setList(list,total);
+        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageUtil.getList());
     }
 
     @Override
@@ -145,12 +166,35 @@ public class ImageServiceImpl implements ImageService{
     public Result getIndex() {
         Map<String,Object>  indexMap = new HashMap<>();
         List<User> userList = userMapper.selectUserIsRecommend(1);
-        List<Map>  imgList = imageMapper.recommendImage(1);
         List<Map>  specialList = getImgMap(specialMapper.selectSpecialRecommend(1));
         indexMap.put("userList",userList);
-        indexMap.put("imgList",imgList);
         indexMap.put("speciaList",specialList);
         return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),indexMap);
+    }
+
+    @Override
+    public Result getImgByU_id(ImageParams imageParams) {
+        if(imageParams.getU_id() == null
+                || imageParams.getPageNum() == null
+                || imageParams.getPageSize() == null
+                || imageParams.getSortType() == null) {
+            return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
+        }
+        PageUtil pageUtil = new PageUtil(imageParams.getPageNum(),imageParams.getPageSize());
+        int total = imageMapper.selectImageByU_idCount(
+                imageParams.getU_id(),
+                imageParams.getType(),
+                imageParams.getSortType(),
+                imageParams.getIm_title());
+        List<Map> list = imageMapper.selectImageByU_id(
+                imageParams.getU_id(),
+                imageParams.getType(),
+                imageParams.getSortType(),
+                imageParams.getIm_title(),
+                pageUtil.getStartIndex(),
+                pageUtil.getEndIndex());
+        pageUtil.setList(list,total);
+        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),pageUtil.getList());
     }
 
     /**

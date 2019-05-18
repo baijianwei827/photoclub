@@ -27,7 +27,7 @@ public class LabelServiceImpl implements LabelService{
     @Override
     @Transactional
     public Result insertLabel(ImgLabel imgLabel) {
-        if(imgLabel.getLa_name()!=null)
+        if(imgLabel.getLa_name()== null)
            return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
         imgLabel.setT_i_la_id(UUID.randomUUID().toString());
         Label label =  labelMapper.selectLabelByName(imgLabel.getLa_name());
@@ -38,7 +38,7 @@ public class LabelServiceImpl implements LabelService{
             String la_id = UUID.randomUUID().toString();
             label.setLa_id(la_id);
             label.setLa_name(imgLabel.getLa_name());
-            int n =labelMapper.insertSelective(label);
+            int n = labelMapper.insertSelective(label);
             if(n != 1)
                 return ResultUtil.error(ResultEnum.ADD_ERROR.getMsg());
             imgLabel.setLa_id(la_id);
@@ -46,7 +46,8 @@ public class LabelServiceImpl implements LabelService{
         int n = imgLabelMapper.insertSelective(imgLabel);
         if(n == 1)
             return ResultUtil.success(ResultEnum.ADD_SUCCESS.getMsg());
-        return ResultUtil.success(ResultEnum.ADD_ERROR.getMsg());
+
+        return ResultUtil.error(ResultEnum.ADD_ERROR.getMsg());
     }
 
     @Override
@@ -54,8 +55,8 @@ public class LabelServiceImpl implements LabelService{
     public Result deleteLabel(ImgLabel imgLabel) {
         if(imgLabel.getT_i_la_id() == null)
             return ResultUtil.error(ResultEnum.DELETE_ERROR.getMsg());
-        ImgLabel imgLabel1 = imgLabelMapper.selectByPrimaryKey(imgLabel.getT_i_la_id());
-        if(imgLabel1 == null)
+        int  n = imgLabelMapper.deleteByPrimaryKey(imgLabel.getT_i_la_id());
+        if(n != 1)
             return ResultUtil.error(ResultEnum.DELETE_ERROR.getMsg());
         return ResultUtil.success(ResultEnum.DELETE_SUCCESS.getMsg());
     }

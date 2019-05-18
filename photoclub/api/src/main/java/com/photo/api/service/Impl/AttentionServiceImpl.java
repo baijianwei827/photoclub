@@ -35,9 +35,9 @@ public class AttentionServiceImpl implements AttentionService {
         //判断是否已经关注了，避免二次关注
         if(attentionMapper.selectAttentionByU_idBy_id(attention.getU_id(),attention.getBy_u_id())!=null)
             return ResultUtil.error(ResultEnum.ATTENTION_ERROR.getMsg());
-        int n = attentionMapper.insert(attention);
+        int n = attentionMapper.insertSelective(attention);
         //判断关注的是人还是专辑，如果是专辑到这里就结束了。
-        if(attention.getA_type() == 1 || n == 1){
+        if(attention.getA_type() == 1){
             specialMapper.UpdateSpecialAttention(1,attention.getBy_u_id());
             return ResultUtil.error(ResultEnum.ATTENTION_SUCCESS.getMsg());
         }
@@ -46,6 +46,7 @@ public class AttentionServiceImpl implements AttentionService {
         bean.setA_id(UUID.randomUUID().toString());
         bean.setU_id(attention.getBy_u_id());
         bean.setBy_u_id(attention.getU_id());
+        bean.setA_type(0);
         int m = attentionMapper.insert(bean);
         if (n == 1 && m ==1){
             //更新用户表中的粉丝和关注数量
@@ -61,16 +62,18 @@ public class AttentionServiceImpl implements AttentionService {
     public Result removeAttention(Attention attention) {
         if(attention.getU_id() == null || attention.getBy_u_id() ==null || attention.getA_type()==null)
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
-        if(attentionMapper.selectAttentionByU_idBy_id(attention.getU_id(),attention.getBy_u_id())!=null)
+        if(attentionMapper.selectAttentionByU_idBy_id(attention.getU_id(),attention.getBy_u_id())==null)
             return ResultUtil.error(ResultEnum.NOT_ATTENTION_ERROR.getMsg());
         //取消关注
+        System.out.println(attention);
         int n = attentionMapper.removeAttentionOrBean(attention.getU_id(),attention.getBy_u_id());
-        if(attention.getA_type() == 1 || n == 1){
+        if(attention.getA_type() == 1){
             specialMapper.UpdateSpecialAttention(-1,attention.getBy_u_id());
-            return ResultUtil.error(ResultEnum.CANCEL_ATTENTION_SUCCESS.getMsg());
+            return ResultUtil.success(ResultEnum.CANCEL_ATTENTION_SUCCESS.getMsg());
         }
         //解除其粉丝关系
         int m = attentionMapper.removeAttentionOrBean(attention.getBy_u_id(),attention.getU_id());
+        System.out.println(m + "---->" + n);
         if(n == 1&&m == 1){
             //更新用户表中的粉丝和关注数量
             UpdateUserAttention(-1,attention.getU_id());

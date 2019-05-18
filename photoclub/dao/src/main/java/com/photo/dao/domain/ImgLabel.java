@@ -20,6 +20,21 @@ public class ImgLabel {
      * 标签名称 la_name
      */
     private String la_name;
+    /**
+     * 用户ID
+     */
+    private String u_id;
+
+    public ImgLabel() {
+    }
+
+    public ImgLabel(String t_i_la_id, String i_id, String la_id, String la_name, String u_id) {
+        this.t_i_la_id = t_i_la_id;
+        this.i_id = i_id;
+        this.la_id = la_id;
+        this.la_name = la_name;
+        this.u_id = u_id;
+    }
 
     /**
      * 主键
@@ -91,6 +106,14 @@ public class ImgLabel {
      */
     public void setLa_name(String la_name) {
         this.la_name = la_name == null ? null : la_name.trim();
+    }
+
+    public String getU_id() {
+        return u_id;
+    }
+
+    public void setU_id(String u_id) {
+        this.u_id = u_id;
     }
 
     /**

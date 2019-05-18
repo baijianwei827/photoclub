@@ -1,5 +1,6 @@
 package com.photo.api.service;
 
+import com.photo.api.params.CommentParams;
 import com.photo.common.results.Result;
 import com.photo.dao.domain.Comment;
 
@@ -22,10 +23,8 @@ public interface CommentService {
 
     /**
      *
-     * @param s_id
-     * @param pageNum
-     * @param pageSize
+
      * @return
      */
-    Result selectCommentByS_id(String s_id,Integer pageNum,Integer pageSize);
+    Result selectCommentByS_id(CommentParams commentParams);
 }

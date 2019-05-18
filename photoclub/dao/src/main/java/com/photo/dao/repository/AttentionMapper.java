@@ -70,6 +70,16 @@ public interface AttentionMapper {
     Map selectAttentionByU_idBy_id(@Param(value = "u_id") String u_id,@Param(value = "by_u_id") String by_u_id);
 
     /**
+     * 判断某个关注是否存在
+     * @param u_id
+     * @param by_u_id
+     * @return
+     */
+    @Select("SELECT * FROM t_attention WHERE u_id = #{u_id} AND by_u_id = #{by_u_id} AND a_type = #{a_type}")
+    Map selectIsAttention(@Param(value = "u_id") String u_id,
+                          @Param(value = "by_u_id") String by_u_id,
+                          @Param(value = "a_type")Integer a_type);
+    /**
      * 查找粉丝
      * @param u_id
      * @return

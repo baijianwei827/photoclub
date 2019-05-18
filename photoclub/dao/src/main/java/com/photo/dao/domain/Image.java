@@ -1,5 +1,6 @@
 package com.photo.dao.domain;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +70,18 @@ public class Image {
      */
     private String im_troduce;
     /**
+     * 图片标题
+     */
+    private String im_title;
+    /**
+     * 是否置顶
+     */
+    private Integer is_top;
+    /**
+     * 置顶时间
+     */
+    private Timestamp top_time;
+    /**
      * 标签列表
      */
     private List<ImgLabel> imgLabels;
@@ -134,6 +147,14 @@ public class Image {
      */
     public void setU_id(String u_id) {
         this.u_id = u_id == null ? null : u_id.trim();
+    }
+
+    public String getIm_title() {
+        return im_title;
+    }
+
+    public void setIm_title(String im_title) {
+        this.im_title = im_title;
     }
 
     /**
@@ -314,6 +335,22 @@ public class Image {
      */
     public void setIm_troduce(String im_troduce) {
         this.im_troduce = im_troduce == null ? null : im_troduce.trim();
+    }
+
+    public Integer getIs_top() {
+        return is_top;
+    }
+
+    public void setIs_top(Integer is_top) {
+        this.is_top = is_top;
+    }
+
+    public Timestamp getTop_time() {
+        return top_time;
+    }
+
+    public void setTop_time(Timestamp top_time) {
+        this.top_time = top_time;
     }
 
     /**

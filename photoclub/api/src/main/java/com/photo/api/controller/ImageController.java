@@ -1,5 +1,6 @@
 package com.photo.api.controller;
 
+import com.photo.api.params.ImageParams;
 import com.photo.api.service.ImageService;
 import com.photo.common.results.Result;
 import com.photo.common.results.ResultUtil;
@@ -25,35 +26,36 @@ public class ImageController {
 
     /**
      * 添加图片
-     * @param images
+     * @param image
      * @return
      */
     @PostMapping("insert")
     @ApiOperation(value = "添加图片",httpMethod = "POST")
-    @ApiImplicitParam(name = "image",value = "图片实体",dataType = "Image",required = true)
-    public Result insertImage(@RequestBody List<Image> images){
-        return imageService.insertImage( images);
+    @ApiImplicitParam(name = "Image",value = "图片实体",dataType = "Image",required = true)
+    public Result insertImage(@RequestBody Image image){
+        return imageService.insertImage(image);
     }
 
     /**
      * 删除图片
-     * @param images
+     * @param image
      * @return
      */
     @DeleteMapping("remove")
     @ApiOperation(value = "删除图片",httpMethod = "DELETE")
     @ApiImplicitParam(name = "images",value = "图片列表",dataType = "List<Image>",required = true)
-    public Result removeImage(@RequestBody List<Image> images){
-        return imageService.deleteImage(images);
+    public Result removeImage(@RequestBody Image image){
+        return imageService.deleteImage(image);
     }
+
     /**
      * 首页推荐图片
      * @return
      */
-    @GetMapping("recommend")
-    @ApiOperation(value = "获取首页推荐图片",httpMethod = "GET")
-    public Result recommendImage(){
-       return imageService.recommendImage();
+    @PostMapping("recommend")
+    @ApiOperation(value = "获取首页推荐图片",httpMethod = "POST")
+    public Result recommendImage(@RequestBody ImageParams imageParams){
+       return imageService.recommendImage(imageParams);
     }
 
     /**
@@ -96,6 +98,7 @@ public class ImageController {
                 (Integer)map.get("pageSize"),
                 (Integer)map.get("sortType"));
     }
+
     /**
      * 通过名称查询图片列表接口
      * @param
@@ -109,12 +112,14 @@ public class ImageController {
             @ApiImplicitParam(name = "pageSize",value = "每页个数",dataType = "Integer",required = true),
             @ApiImplicitParam(name = "sortType",value = "排序类型",dataType = "Integer",required = true)
     })
-    public Result selectImageById(@RequestParam("name")String name,
-                                  @RequestParam("pageNum")Integer pageNum,
-                                  @RequestParam("pageSize")Integer pageSize,
-                                  @RequestParam("sortType")Integer sortType){
-        return imageService.selectImageByName(name,pageNum,pageSize,sortType);
+    public Result selectImageByName(@RequestBody ImageParams imageParams){
+        return imageService.selectImageByName(
+                imageParams.getIm_title(),
+                imageParams.getPageNum(),
+                imageParams.getPageSize(),
+                imageParams.getSortType());
     }
+
     /**
      * 通过类别ID查询图片列表接口
      * @param
@@ -123,21 +128,41 @@ public class ImageController {
     @PostMapping("t_id")
     @ApiOperation(value = "通过类别ID查询图片列表接口",httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "t_id",value = "类别ID",dataType = "Integer",required = true),
-            @ApiImplicitParam(name = "pageNum",value = "当前页数",dataType = "Integer",required = true),
-            @ApiImplicitParam(name = "pageSize",value = "每页个数",dataType = "Integer",required = true),
-            @ApiImplicitParam(name = "sortType",value = "排序类型",dataType = "Integer",required = true)
+            @ApiImplicitParam(name = "ImageParams",value = "ImageParams",dataType = "ImageParams",required = true),
     })
-    public Result selectImageById(@RequestParam("t_id")Integer t_id,
-                                  @RequestParam("pageNum")Integer pageNum,
-                                  @RequestParam("pageSize")Integer pageSize,
-                                  @RequestParam("sortType")Integer sortType){
-        return imageService.selectImageByType_id(t_id,pageNum,pageSize,sortType);
+    public Result selectImageById(@RequestBody ImageParams imageParams){
+        return imageService.selectImageByType_id(
+                imageParams.getT_id(),
+                imageParams.getPageNum(),
+                imageParams.getPageSize(),
+                imageParams.getSortType());
     }
+
+    /**
+     * 获取首页内容
+     * @return
+     */
     @GetMapping("index")
     @ApiOperation(value = "获取首页内容",httpMethod = "GET")
     public Result getIndex(){
         return imageService.getIndex();
     }
 
+    /**
+     * 通过用户ID 获取图片列表
+     * @param imageParams
+     * @return
+     */
+    @PostMapping("imglist")
+    @ApiOperation(value = "用用户ID获取图片列表",httpMethod = "POST")
+    public Result getImgListByU_id(@RequestBody ImageParams imageParams){
+        return imageService.getImgByU_id(imageParams);
+    }
+
+    @PutMapping("update")
+    @ApiOperation(value = "修改图片",httpMethod = "PUT")
+    public Result updateImage (@RequestBody Image image) {
+
+        return  imageService.updateImage(image);
+    }
 }

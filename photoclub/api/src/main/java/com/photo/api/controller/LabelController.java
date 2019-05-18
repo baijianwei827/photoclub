@@ -15,7 +15,6 @@ public class LabelController{
     @Autowired
     private LabelService labelService;
 
-
     /**
      * 添加标签接口
      * @param label

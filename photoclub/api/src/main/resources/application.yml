@@ -3,7 +3,7 @@ spring:
     name: api
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/db_photosclubs?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/db_blog?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
   redis:
@@ -15,7 +15,7 @@ spring:
         max-idle: 20
         max-active: 100
 server:
-  port: 8080
+  port: 80
 
 redis:
   host: 127.0.0.1
@@ -36,8 +36,3 @@ mybatis:
     call-setters-on-nulls: true
 
 
-pagehelper:
-  helperDialect: mysql
-  reasonable: true
-  supportMethodsArguments: true
-  params: count=countSql

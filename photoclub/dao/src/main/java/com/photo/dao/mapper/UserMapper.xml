@@ -23,15 +23,19 @@
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.photo.dao.domain.User">
     <result column="u_introduce" jdbcType="LONGVARCHAR" property="u_introduce" />
   </resultMap>
+
   <sql id="Base_Column_List">
     u_id, u_account, u_password, u_nickName, u_avatar, u_isfalse, u_profession, u_hobby, 
     u_province, u_city, is_Top, top_time, is_new, u_createTime, u_type, attention_number, 
     fans_number
   </sql>
+
   <sql id="Blob_Column_List">
     u_introduce
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+
     select 
     <include refid="Base_Column_List" />
     ,
@@ -39,10 +43,12 @@
     from t_user
     where u_id = #{u_id,jdbcType=VARCHAR}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from t_user
     where u_id = #{u_id,jdbcType=VARCHAR}
   </delete>
+
   <insert id="insert" parameterType="com.photo.dao.domain.User">
     insert into t_user (u_id, u_account, u_password, 
       u_nickName, u_avatar, u_isfalse, 
@@ -59,6 +65,7 @@
       #{attention_number,jdbcType=INTEGER}, #{fans_number,jdbcType=INTEGER}, #{u_introduce,jdbcType=LONGVARCHAR}
       )
   </insert>
+
   <insert id="insertSelective" parameterType="com.photo.dao.domain.User">
     insert into t_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -174,6 +181,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.photo.dao.domain.User">
     update t_user
     <set>
@@ -228,15 +236,10 @@
       <if test="u_introduce != null">
         u_introduce = #{u_introduce,jdbcType=LONGVARCHAR},
       </if>
-      <if test="is_top != null">
-        is_top = #{is_top,jdbcType=INTEGER},
-      </if>
-      <if test="top_time != null">
-        top_time = #{top_time,jdbcType=TIMESTAMP}
-      </if>
     </set>
     where u_id = #{u_id,jdbcType=VARCHAR}
   </update>
+
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.photo.dao.domain.User">
     update t_user
     set u_account = #{u_account,jdbcType=VARCHAR},
@@ -258,6 +261,7 @@
       u_introduce = #{u_introduce,jdbcType=LONGVARCHAR}
     where u_id = #{u_id,jdbcType=VARCHAR}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.photo.dao.domain.User">
     update t_user
     set u_account = #{u_account,jdbcType=VARCHAR},
@@ -278,6 +282,7 @@
       fans_number = #{fans_number,jdbcType=INTEGER}
     where u_id = #{u_id,jdbcType=VARCHAR}
   </update>
+
   <!--自定义方法-->
   <sql id="BaseUserInfo">
     u_id, u_account, u_nickName, u_avatar,u_isfalse, u_profession, u_hobby,
@@ -307,19 +312,59 @@
     from t_user where u_account = #{u_account,jdbcType=VARCHAR}
   </select>
 
+  <select id="selectUserByU_id" parameterType="java.lang.String" resultMap="userBaseInfo">
+    select
+    u_id, u_account, u_nickName, u_avatar,u_isfalse, u_profession, u_hobby,
+    u_province, u_city, attention_number,fans_number,
+    <include refid="Blob_Column_List"/>
+    from t_user where u_id = #{u_id,jdbcType=VARCHAR}
+  </select>
+
   <select id="selectUserIsRecommend" parameterType="java.lang.Integer" resultMap="userBaseInfo">
     SELECT
     <include refid="BaseUserInfo"/>
      FROM t_user WHERE is_Top = #{is_Top,javaType=INTEGER} ORDER BY top_time DESC
   </select>
 
-  <select id="selectUserByLikeNickName" resultMap="userBaseInfo">
+  <select id="selectUserByLikeNickName" resultType="java.util.Map">
     SELECT
     <include refid="BaseUserInfo"/>
-     FROM t_user WHERE u_nickName LIKE CONCAT(CONCAT('%', #{u_nickName}), '%')
+     FROM t_user
+     <choose>
+       <when test="u_nickName">
+         WHERE u_nickName LIKE CONCAT(CONCAT('%', #{u_nickName}), '%')
+       </when>
+     </choose>
     <choose>
-      <when test="isDesc != 0">
+        <when test="isDesc == 0">
+          ORDER BY top_time DESC
+        </when>
+      <when test="isDesc == 1">
+        ORDER BY fans_number DESC
+      </when>
+    </choose>
+    <choose>
+      <when test="pageNum != null and pageSize != null">
+        LIMIT #{pageNum},#{pageSize}
+      </when>
+    </choose>
+  </select>
+
+  <select id="selectUserByLikeNickNameCount" resultType="java.lang.Integer">
+    SELECT
+    COUNT(*)
+    FROM t_user
+    <choose>
+      <when test="u_nickName">
+        WHERE u_nickName LIKE CONCAT(CONCAT('%', #{u_nickName}), '%')
+      </when>
+    </choose>
+    <choose>
+      <when test="isDesc == 0">
         ORDER BY top_time DESC
+      </when>
+      <when test="isDesc == 1">
+        ORDER BY fans_number DESC
       </when>
     </choose>
   </select>

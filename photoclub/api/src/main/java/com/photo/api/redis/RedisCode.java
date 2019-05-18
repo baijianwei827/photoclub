@@ -22,6 +22,7 @@ public class RedisCode {
     public void  removeCode(Integer type,String phone){
         redisUtil.del(type+CODE_TYPE+phone);
     }
+
     public boolean compareCode (Integer type,String phone,String code){
        String redis_code = (String) getCode(type,phone);
        if(redis_code == null)

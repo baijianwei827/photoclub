@@ -1,5 +1,6 @@
 package com.photo.api.service;
 
+import com.photo.api.params.ImageParams;
 import com.photo.common.results.Result;
 import com.photo.dao.domain.Image;
 import com.photo.dao.domain.ImgLabel;
@@ -11,17 +12,17 @@ import java.util.List;
 public interface ImageService {
     /**
      * 添加图片
-     * @param images
+     * @param image
      * @return
      */
-    Result insertImage(List<Image> images);
+    Result insertImage(Image image);
 
     /**
      * 删除图片
      * @param images
      * @return
      */
-    Result deleteImage(List<Image> images);
+    Result deleteImage(Image images);
 
     /**
      * 修改图片
@@ -69,7 +70,7 @@ public interface ImageService {
      * 首页推荐图片
      * @return
      */
-    Result recommendImage();
+    Result recommendImage(ImageParams imageParams);
 
     /**
      * 获取阿里云临时身份
@@ -83,4 +84,5 @@ public interface ImageService {
      */
     Result getIndex();
 
+    Result getImgByU_id(ImageParams imageParams);
 }

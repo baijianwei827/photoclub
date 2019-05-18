@@ -1,14 +1,18 @@
 package com.photo.api.service.Impl;
 
+import com.photo.api.params.UserParams;
 import com.photo.api.redis.RedisCode;
 import com.photo.api.service.UserService;
 import com.photo.common.enmus.ResultEnum;
 import com.photo.common.results.Result;
 import com.photo.common.results.ResultUtil;
 import com.photo.common.tools.JwtUtils;
+import com.photo.common.tools.PageUtil;
 import com.photo.common.tools.SMSUtils;
 import com.photo.common.tools.StringUtil;
+import com.photo.dao.domain.Attention;
 import com.photo.dao.domain.User;
+import com.photo.dao.repository.AttentionMapper;
 import com.photo.dao.repository.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +25,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private RedisCode redisCode;
+
+    @Autowired
+    private AttentionMapper attentionMapper;
 
     @Override
     public Result login(String account, String password) {
@@ -49,7 +57,7 @@ public class UserServiceImpl implements UserService {
         Map userMap = new HashMap();
         user.setU_password(null);
         userMap.put("user", user);
-        userMap.put("token", token);
+        userMap.put("Authorization", token);
         return ResultUtil.success(ResultEnum.LOGIN_SUCCESS.getMsg(),userMap);
     }
 
@@ -93,7 +101,6 @@ public class UserServiceImpl implements UserService {
         //判断参数是否为空!
         if(user == null
                 || user.getU_account() == null
-                || user.getU_password() == null
                 || user.getU_id() == null
                 ||user.getU_nickName() == null){
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
@@ -140,7 +147,7 @@ public class UserServiceImpl implements UserService {
     public Result selectUserById(String u_id){
         if(u_id == null)
             return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
-        User user = userMapper.selectByPrimaryKey(u_id);
+        User user = userMapper.selectUserByU_id(u_id);
         if(user !=null){
             return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),user);
         }
@@ -151,12 +158,6 @@ public class UserServiceImpl implements UserService {
     public Result selectUserIsRecommend(){
          List<User> userList = userMapper.selectUserIsRecommend(1);
          return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),userList);
-    }
-
-    @Override
-    public Result selectUserByLike(String u_nickName, Integer isDesc){
-        List<User> userList = userMapper.selectUserByLikeNickName(u_nickName,isDesc);
-        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),userList);
     }
 
     @Override
@@ -193,6 +194,42 @@ public class UserServiceImpl implements UserService {
         if (n==1)
             return ResultUtil.success(ResultEnum.UPDATE_SUCCESS.getMsg());
         return ResultUtil.success(ResultEnum.UPDATE_ERROR.getMsg());
+    }
+
+    @Override
+    public Result selectByNickName(UserParams userParams) {
+        if(userParams.getPageNum() == null || userParams.getPageSize() == null)
+            return ResultUtil.error(ResultEnum.PARAMTER_NOT_NULL.getMsg());
+        PageUtil pageUtil = new PageUtil(userParams.getPageNum(), userParams.getPageSize());
+        int total = userMapper.selectUserByLikeNickNameCount(
+                userParams.getU_nickName(),
+                userParams.getSortType());
+        List<Map> userList = userMapper.selectUserByLikeNickName(
+                userParams.getU_nickName(),
+                userParams.getSortType(),
+                pageUtil.getStartIndex(),
+                pageUtil.getEndIndex());
+        if(userParams.getU_id()!= null)
+           userList = selectIsAttention(userParams.getU_id(),userList);
+        pageUtil.setList(userList,total);
+        return ResultUtil.success(ResultEnum.SELECT_SUCCESS.getMsg(),userList);
+    }
+
+    public List<Map> selectIsAttention(String u_id ,List<Map> userList) {
+        if(userList.size() == 0)
+            return userList;
+        for (Map map:userList) {
+            String by_u_id = (String) map.get("u_id");
+            Map attention = attentionMapper.selectIsAttention(u_id,by_u_id,0);
+            if (attention != null) {
+                map.put("isAttention", 1);
+                map.put("attention",attention);
+            } else {
+                map.put("isAttention", 0);
+            }
+
+        }
+        return userList;
     }
 
 

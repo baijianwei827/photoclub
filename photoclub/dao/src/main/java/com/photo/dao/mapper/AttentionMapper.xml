@@ -113,6 +113,7 @@
     FROM  t_attention as a ,t_user as u WHERE u.u_id = a.by_u_id
     AND a.u_id = #{u_id} AND a.a_type =#{a_type}  ORDER BY a_time DESC
   </select>
+
   <select id="selectAttentionByU_idBy_id" resultMap="AttentionUserInfo">
     SELECT
     a.a_id,a.a_time,
@@ -120,6 +121,7 @@
     FROM  t_attention as a ,t_user as u WHERE u.u_id = a.by_u_id
     AND a.u_id = #{u_id} AND a.by_u_id = #{by_u_id} ORDER BY a_time DESC
   </select>
+
   <select id="selectBeanByU_id" resultMap="AttentionUserInfo">
     SELECT
     a.a_id,a.a_time,
